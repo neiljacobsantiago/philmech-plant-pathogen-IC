@@ -1,6 +1,6 @@
-# PHilMech - Laboratory Services Division AI Pathogen Classifier
+# PHilMech - Laboratory Services Division Pathogen Classifier
 
-An offline-first Progressive Web App (PWA) designed to replace PCR testing with local, serverless machine learning for *Aspergillus* classification.
+An offline-first Progressive Web App (PWA) designed to ............, serverless machine learning for *Aspergillus* classification.
 
 ## System Architecture
 * **Core Framework:** [TBD]
