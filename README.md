@@ -8,7 +8,7 @@ An offline-first Progressive Web App (PWA) designed as a low-cost alternative, s
 * **Local Storage:** IndexedDB (Secure, on-device ledger)
 
 ## UI/UX & Design System
-* **Theme:** High-contrast, minimalist (Black, White, and `#006837` accent).
+* **Theme:** High-contrast, minimalist (Off-Black, Off-White, and `#006837` accent).
 * **Primary Workflow:** Mobile-first, 4-5-click capture and analysis workflow.
 * **Camera Integration:** Native smartphone camera integration with local device gallery fallback. 
 
