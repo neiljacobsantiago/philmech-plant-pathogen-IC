@@ -1,0 +1,185 @@
+/* 
+   style.css 
+   Main stylesheet for PICS 
+*/
+
+/* Choosing up the custom Google Sans Flex variable font
+for simplified typography and improved readability */
+@font-face {
+    font-family: 'Google Sans Flex';
+    src: url('../assets/fonts/GoogleSansFlex-VariableFont.ttf') format('truetype');
+    font-weight: 100 900; 
+    font-style: normal;
+}
+
+/* --- Base Variables & Theme --- */
+:root {
+    --bg-light: #F4F5F7;
+    --green-primary: #006837;
+    --text-dark: #1C1C1E;
+    --text-muted: #6E6E73;
+    --border-light: #b1b1b1;
+    --input-bg: #FAFAFA;
+}
+
+/* Global Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    
+    /* slamming the custom font on everything, system fonts as fallbacks */
+    font-family: 'Google Sans Flex', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    
+    /* stops iPhones from zooming text randomly when flipped to landscape */
+    -webkit-text-size-adjust: 100%; 
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    
+    /* using dvh to ignore annoying mobile browser URL bars */
+    min-height: 100dvh; 
+}
+
+/* --- Main Layout Container --- */
+.app-wrapper {
+    width: 100%;
+    /* 480px max keeps it feeling like a native mobile app even on desktop monitors */
+    max-width: 480px; 
+    min-height: 100dvh; 
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-light);
+    
+    /* 
+       safe areas for modern phones so the UI doesn't hide behind the 
+       iPhone notch/dynamic island or the android home gesture bar.
+    */
+    padding: env(safe-area-inset-top, 20px) 
+             env(safe-area-inset-right, 20px) 
+             env(safe-area-inset-bottom, 20px) 
+             env(safe-area-inset-left, 20px);
+}
+
+/* --- Brand Header Section --- */
+.login-brand {
+    display: flex;
+    flex-direction: row; /* Flips it from stacked to side-by-side */
+    align-items: center;
+    justify-content: center;
+    gap: 1.2rem; /* Breathing room between logo and text */
+    background-color: transparent; 
+    padding: 3rem 2rem 2rem; /* Pushes it down from the top notch */
+    width: 100%;
+}
+
+.login-logo {
+    width: 90px; /* Scaled down to match the Figma proportions */
+    height: auto;
+    background: transparent; 
+}
+
+.sys-title {
+    color: var(--text-dark); 
+    font-size: 1.1rem; /* slightly smaller to fit the row */
+    text-align: left; /* Align text to the left now that it's next to the logo */
+    line-height: 1.4;
+    font-weight: 800; 
+    letter-spacing: 0.5px;
+}
+
+.sys-title span {
+    color: var(--green-primary);
+}
+
+/* --- Authentication Form --- */
+.auth-form {
+    width: 100%;
+    padding: 0 2rem; /* Keeps the form from touching the screen edges */
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Space between the input groups */
+    margin-top: 2rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.input-group label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 1rem 1.2rem;
+    font-size: 1rem;
+    color: var(--text-dark);
+    background-color: var(--bg-light);
+    border: 1.5px solid var(--border-light);
+    border-radius: 8px; /* The native mobile rounded corners */
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+/* Gives a nice green highlight when the user taps an input */
+.input-group input:focus {
+    border-color: var(--green-primary);
+}
+
+.input-group input::placeholder {
+    color: var(--border-light);
+    font-weight: 500;
+}
+
+/* --- Buttons & Links --- */
+.btn-primary {
+    width: 100%;
+    padding: 1.1rem;
+    background-color: var(--green-primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    margin-top: 0.5rem;
+}
+
+.btn-text {
+    text-align: center;
+    display: block;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin-top: 1rem;
+}
+
+/* --- Footer --- */
+.version-tag {
+    width: 100%;
+    text-align: right;
+    padding: 2rem;
+    font-size: 0.6rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    letter-spacing: 0.5px;
+}
+
+/* utility class from your HTML */
+.mt-auto {
+    margin-top: auto;
+}

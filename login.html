@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Login | PICS</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <main class="app-wrapper p-20">
+        
+        <!-- Brand Section -->
+        <header class="login-brand mt-auto">
+            <img src="assets/appLogo.png" alt="PICS Logo" class="login-logo">
+            <h1 class="sys-title">
+                <span>P</span>LANT PATHOGEN<br>
+                <span>I</span>MAGE<br>
+                <span>C</span>LASSIFICATION<br>
+                <span>S</span>YSTEM
+            </h1>
+        </header>
+
+        <!-- Authentication Form -->
+        <form class="auth-form flex-col mt-auto" onsubmit="event.preventDefault(); navigateTo('dashboard.html');">
+            <div class="input-group">
+                <label for="employeeId">EMPLOYEE ID or USERNAME</label>
+                <input type="text" id="employeeId" placeholder="Employee ID" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="password">PASSWORD</label>
+                <input type="password" id="password" placeholder="Password" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-10">LOGIN</button>
+            <a href="#" class="btn-text">FORGOT YOUR PASSWORD?</a>
+        </form>
+
+        <!-- Footer -->
+        <footer class="version-tag mt-auto">
+            VERSION 0.1.4 DEVELOPER ALPHA
+        </footer>
+
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
