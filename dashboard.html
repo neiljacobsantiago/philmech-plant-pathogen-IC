@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dashboard | PICS</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <main class="app-wrapper p-20">
+
+<!-- Branded Header -->
+        <header class="scan-header">
+            <!-- App Logo -->
+            <img src="assets/appLogo.png" alt="App Logo" style="width: 36px; height: 36px; object-fit: contain;">
+            
+        <div class="scan-header-right">
+            <div class="scan-user-info">
+                <h2>WELCOME, USER!</h2>
+                <p>Plant Pathogen Image Classification System</p>
+            </div>
+            
+            <img src="assets/userIcon.png" alt="User Avatar" class="profile-avatar-img">
+        </div>
+        </header>
+
+        <!-- Empty State UI -->
+        <section class="camera-placeholder">
+            <div class="bracket bracket-tl"></div>
+            <div class="bracket bracket-tr"></div>
+            <div class="bracket bracket-bl"></div>
+            <div class="bracket bracket-br"></div>
+            
+            <! -- TO BE CHANGED: Add a placeholder icon and text to indicate that the user should place a sample for scanning. -- >
+            <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="8"></circle>
+                <line x1="12" y1="2" x2="12" y2="6"></line>
+                <line x1="12" y1="18" x2="12" y2="22"></line>
+                <line x1="2" y1="12" x2="6" y2="12"></line>
+                <line x1="18" y1="12" x2="22" y2="12"></line>
+                <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <h3 class="placeholder-title">Place a sample to perform this action</h3>
+            <p class="placeholder-subtitle">Use buttons below to begin</p>
+        </section>
+
+<!-- Bottom Section Wrapped for Ergonomic 1-Handed Use -->
+        <div class="bottom-controls mt-auto" style="width: 100%;">
+            
+<!-- Action Buttons -->
+            <div class="btn-stack">
+                <button type="button" class="btn-action" id="scanCameraBtn">
+                    <img src="assets/cameraIcon.svg" alt="Camera" style="width: 24px; height: 24px; margin-right: 4px;">
+                    Use Camera
+                </button>
+
+                <button type="button" class="btn-action" id="scanUploadBtn">
+                    <img src="assets/uploadIcon.svg" alt="Upload" style="width: 24px; height: 24px; margin-right: 4px;">
+                    Upload File
+                </button>
+                
+            </div>
+
+            <!-- Hidden Inputs -->
+            <input type="file" id="dashFileInput" accept="image/*" style="display: none;">
+            <input type="file" id="dashCameraInput" accept="image/*" capture="environment" style="display: none;">
+
+            <!-- Footer ///To be changed soon -->
+            <footer class="version-tag">
+                VERSION 0.1.4 DEVELOPER ALPHA
+            </footer>
+            
+        </div>
+    </main>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
+
+
+<!-- Additional Context: These are currently initial code. Inform other devs if you wish to make changes -->
+<!-- Additional Context: AI Prompt Engineering is used for optimizing this code -->

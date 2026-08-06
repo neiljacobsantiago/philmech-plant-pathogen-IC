@@ -28,7 +28,7 @@ for simplified typography and improved readability */
     margin: 0;
     padding: 0;
     
-    /* slamming the custom font on everything, system fonts as fallbacks */
+    /*  custom font on everything, system fonts as fallbacks */
     font-family: 'Google Sans Flex', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     
     /* stops iPhones from zooming text randomly when flipped to landscape */
@@ -183,3 +183,210 @@ body {
 .mt-auto {
     margin-top: auto;
 }
+
+/* --- scan.html designs --- */
+.scan-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.5rem 0 1rem 0;
+}
+
+.scan-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.scan-header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.scan-user-info {
+    text-align: right;
+}
+
+.scan-logo {
+    width: 36px;
+    height: auto;
+    background: transparent;
+}
+
+.scan-user-info h2 {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.scan-user-info p {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.profile-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #E5E5EA;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+}
+
+.profile-avatar-img {
+    width: 36px; 
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover; 
+    border: 1px solid var(--text-muted); 
+}
+
+/* Specimen Card & Preview Area */
+.specimen-card {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    background-color: #1C1C1E;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+
+.specimen-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.btn-close-preview {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #000;
+    font-weight: 800;
+    font-size: 1.2rem;
+    line-height: 1;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+.status-text {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin: 0.75rem 0 1.5rem 0;
+    text-align: left;
+}
+
+/* Action Button Stack */
+.btn-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.btn-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 1.1rem;
+    background-color: var(--green-primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-action:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.btn-action svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+
+
+/* --- dashboard.html --- */
+.camera-placeholder {
+    position: relative;
+    width: 100%;
+    height: 320px; /* Taller to match the mockup proportions */
+    background-color: #EFEFEF; /* Lighter gray for the empty state */
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.5rem;
+    padding: 2rem;
+    text-align: center;
+}
+
+/* Targeting Brackets */
+.bracket {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-color: var(--green-primary);
+    border-style: solid;
+    border-width: 0;
+}
+
+.bracket-tl { top: 20px; left: 20px; border-top-width: 1.5px; border-left-width: 1.5px; }
+.bracket-tr { top: 20px; right: 20px; border-top-width: 1.5px; border-right-width: 1.5px; }
+.bracket-bl { bottom: 20px; left: 20px; border-bottom-width: 1.5px; border-left-width: 1.5px; }
+.bracket-br { bottom: 20px; right: 20px; border-bottom-width: 1.5px; border-right-width: 1.5px; }
+
+/* Empty State Content */
+.placeholder-icon {
+    width: 48px;
+    height: 48px;
+    color: #BDBDBD;
+    margin-bottom: 1rem;
+}
+
+.placeholder-title {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem;
+}
+
+.placeholder-subtitle {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+
+/* Additional Context: These are currently initial code. Inform other devs if you wish to make changes */
+/* Additional Context: AI Prompt Engineering is used for optimizing this code */

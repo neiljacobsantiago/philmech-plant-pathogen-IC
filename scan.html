@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Scan | PICS</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <main class="app-wrapper p-20">
+
+<!-- Custom Branded Header -->
+        <header class="scan-header">
+            <img src="assets/appLogo.png" alt="App Logo" style="width: 36px; height: 36px; object-fit: contain;">
+            
+        <div class="scan-header-right">
+            <div class="scan-user-info">
+                <h2>WELCOME, NEIL JACOB!</h2>
+                <p>Plant Pathogen Image Classification System</p>
+            </div>
+            
+            <img src="assets/userIcon.png" alt="User Avatar" class="profile-avatar-img">
+        </div>
+        </header>
+
+        <!-- Specimen Preview Container -->
+        <section class="specimen-card" id="specimenCard">
+            <img id="imagePreview" src="" alt="Specimen Preview" style="display: none;">
+            <button type="button" class="btn-close-preview" id="clearBtn" style="display: none;" aria-label="Clear image">&times;</button>
+        </section>
+        <p class="status-text" id="statusText">No image selected</p>
+
+<!-- Action Buttons -->
+            <div class="btn-stack">
+                <button type="button" class="btn-action" id="scanCameraBtn">
+                    <img src="assets/cameraIcon.svg" alt="Camera" style="width: 24px; height: 24px; margin-right: 8px;">
+                    Use Camera
+                </button>
+
+                <button type="button" class="btn-action" id="scanUploadBtn">
+                    <img src="assets/uploadIcon.svg" alt="Upload" style="width: 24px; height: 24px; margin-right: 8px;">
+                    Upload File
+                </button>
+                
+                <!-- If you have the Analyze button on this page -->
+                <button type="button" class="btn-action" id="scanAnalyzeBtn">
+                    <img src="assets/analyzeIcon.svg" alt="Analyze" style="width: 24px; height: 24px; margin-right: 8px;">
+                    Analyze Image
+                </button>
+            </div>
+
+        <!-- Hidden Inputs for File and Camera Triggers -->
+        <input type="file" id="fileInput" accept="image/*" style="display: none;">
+        <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;">
+
+        <!-- Footer  ///To be changed soon -->
+        <footer class="version-tag mt-auto">
+            VERSION 0.1.4 DEVELOPER ALPHA
+        </footer>
+
+    </main>
+
+    <!-- Machine Learning Scripts for non-internet use | tf.min.js and teachablemachine-image.min.js are both OSS -->
+    <script src="js/tf.min.js"></script>
+    <script src="js/teachablemachine-image.min.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
+
+
+<!-- Additional Context: These are currently initial code. Inform other devs if you wish to make changes -->
+<!-- Additional Context: AI Prompt Engineering is used for optimizing this code -->
