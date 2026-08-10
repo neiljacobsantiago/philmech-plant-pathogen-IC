@@ -12,15 +12,14 @@ if (loginForm) {
         const passInput = document.getElementById('password').value;
         const submitBtn = loginForm.querySelector('button[type="submit"]');
 
-        // Simple validation check (no strict credentials yet)
+        //  validation check (no  credentials yet)
         if (idInput.trim() !== '' && passInput.trim() !== '') {
-            // Simulate authentication UI delay
             submitBtn.innerText = 'AUTHENTICATING...';
             submitBtn.style.opacity = '0.8';
             
             setTimeout(() => {
                 window.location.href = 'dashboard.html';
-            }, 800); // 800ms delay to feel natural
+            }, 800); 
         }
     });
 }
@@ -59,7 +58,7 @@ const clearBtn = document.getElementById('clearBtn');
 const statusText = document.getElementById('statusText');
 const analyzeBtn = document.getElementById('analyzeBtn');
 
-// Initialize offline model only on scan page
+// Initialize the model only on scan page
 if (analyzeBtn) {
     initModel();
     checkPendingImage();

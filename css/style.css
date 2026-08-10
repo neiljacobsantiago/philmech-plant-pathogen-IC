@@ -1,10 +1,10 @@
 /* 
    style.css 
    Main stylesheet for PICS 
+
+   CSS code is still not fully optimized for production. Changes soon
 */
 
-/* Choosing up the custom Google Sans Flex variable font
-for simplified typography and improved readability */
 @font-face {
     font-family: 'Google Sans Flex';
     src: url('../assets/fonts/GoogleSansFlex-VariableFont.ttf') format('truetype');
@@ -33,7 +33,7 @@ for simplified typography and improved readability */
     
     /* stops iPhones from zooming text randomly when flipped to landscape */
     -webkit-text-size-adjust: 100%; 
-}
+} /* Since iPhone were somewhat strict in the browsers, a backup font will be used to load.*/
 
 body {
     background-color: var(--bg-light);
@@ -69,25 +69,25 @@ body {
 /* --- Brand Header Section --- */
 .login-brand {
     display: flex;
-    flex-direction: row; /* Flips it from stacked to side-by-side */
+    flex-direction: row; 
     align-items: center;
     justify-content: center;
-    gap: 1.2rem; /* Breathing room between logo and text */
+    gap: 1.2rem; 
     background-color: transparent; 
-    padding: 3rem 2rem 2rem; /* Pushes it down from the top notch */
+    padding: 3rem 2rem 2rem; 
     width: 100%;
 }
 
 .login-logo {
-    width: 90px; /* Scaled down to match the Figma proportions */
+    width: 90px; 
     height: auto;
     background: transparent; 
 }
 
 .sys-title {
     color: var(--text-dark); 
-    font-size: 1.1rem; /* slightly smaller to fit the row */
-    text-align: left; /* Align text to the left now that it's next to the logo */
+    font-size: 1.1rem; 
+    text-align: left; 
     line-height: 1.4;
     font-weight: 800; 
     letter-spacing: 0.5px;
@@ -100,10 +100,10 @@ body {
 /* --- Authentication Form --- */
 .auth-form {
     width: 100%;
-    padding: 0 2rem; /* Keeps the form from touching the screen edges */
+    padding: 0 2rem; 
     display: flex;
     flex-direction: column;
-    gap: 1.5rem; /* Space between the input groups */
+    gap: 1.5rem; 
     margin-top: 2rem;
 }
 
@@ -127,7 +127,7 @@ body {
     color: var(--text-dark);
     background-color: var(--bg-light);
     border: 1.5px solid var(--border-light);
-    border-radius: 8px; /* The native mobile rounded corners */
+    border-radius: 8px; 
     outline: none;
     transition: border-color 0.2s ease;
 }
@@ -339,8 +339,8 @@ body {
 .camera-placeholder {
     position: relative;
     width: 100%;
-    height: 320px; /* Taller to match the mockup proportions */
-    background-color: #EFEFEF; /* Lighter gray for the empty state */
+    height: 320px; 
+    background-color: #EFEFEF; 
     border-radius: 12px;
     display: flex;
     flex-direction: column;
