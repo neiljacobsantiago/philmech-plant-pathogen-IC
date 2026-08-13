@@ -3,70 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Scan | PICS</title>
+    <title>Scan Preview | PICS</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <main class="app-wrapper p-20">
 
-<!-- Branded Header -->
+        <!-- Same branding header. Copy-paste lang to from dashboard. -->
         <header class="scan-header">
             <img src="assets/appLogo.png" alt="App Logo" style="width: 36px; height: 36px; object-fit: contain;">
-            
-        <div class="scan-header-right">
-            <div class="scan-user-info">
-                <h2>WELCOME, NEIL JACOB!</h2>
-                <p>Plant Pathogen Image Classification System</p>
+            <div class="scan-header-right">
+                <div class="scan-user-info">
+                    <h2>WELCOME, USER!</h2>
+                    <p>Plant Pathogen Image Classification System</p>
+                </div>
+                <img src="assets/userIcon.png" alt="User Avatar" class="profile-avatar-img">
             </div>
-            
-            <img src="assets/userIcon.png" alt="User Avatar" class="profile-avatar-img">
-        </div>
         </header>
 
-        <!-- Specimen Preview Container -->
-        <section class="specimen-card" id="specimenCard">
-            <img id="imagePreview" src="" alt="Specimen Preview" style="display: none;">
-            <button type="button" class="btn-close-preview" id="clearBtn" style="display: none;" aria-label="Clear image">&times;</button>
+        <!-- Dito makikita yung preview ng pic bago i-analyze. Kung pangit ang kuha o blur, pwede i-X nung user. -->
+        <section class="specimen-card" id="specimenCard" style="position: relative;">
+            <img id="imagePreview" src="" alt="Specimen Preview" style="width: 100%; border-radius: 12px; display: block;">
+            <button type="button" class="btn-close-preview" id="clearBtn" aria-label="Clear image" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 20px; cursor: pointer;">&times;</button>
         </section>
-        <p class="status-text" id="statusText">No image selected</p>
+        <p class="status-text" id="statusText" style="text-align: center; margin: 10px 0; color: #666;">Image ready to Analyze</p>
 
-<!-- Action Buttons -->
-            <div class="btn-stack">
-                <button type="button" class="btn-action" id="scanCameraBtn">
-                    <img src="assets/cameraIcon.svg" alt="Camera" style="width: 24px; height: 24px; margin-right: 8px;">
-                    Use Camera
-                </button>
+        <!-- Analyze button sa taas, camera/upload sa ilalim if ever gusto palitan yung pic without going back to dash -->
+        <div class="btn-stack mt-auto" style="width: 100%;">
+            <button type="button" class="btn-action btn-primary" id="scanAnalyzeBtn" style="background-color: #006b3f; color: white; margin-bottom: 10px;">
+                <img src="assets/analyzeIcon.svg" alt="Analyze" style="width: 24px; height: 24px; margin-right: 8px; filter: brightness(0) invert(1);">
+                Analyze Image
+            </button>
 
-                <button type="button" class="btn-action" id="scanUploadBtn">
-                    <img src="assets/uploadIcon.svg" alt="Upload" style="width: 24px; height: 24px; margin-right: 8px;">
-                    Upload File
-                </button>
-                
-                <!-- If you have the Analyze button on this page -->
-                <button type="button" class="btn-action" id="scanAnalyzeBtn">
-                    <img src="assets/analyzeIcon.svg" alt="Analyze" style="width: 24px; height: 24px; margin-right: 8px;">
-                    Analyze Image
-                </button>
-            </div>
+            <button type="button" class="btn-action" id="scanCameraBtn">
+                <img src="assets/cameraIcon.svg" alt="Camera" style="width: 24px; height: 24px; margin-right: 8px;">
+                Use Camera
+            </button>
 
-        <!-- Hidden Inputs for File and Camera Triggers -->
+            <button type="button" class="btn-action" id="scanUploadBtn">
+                <img src="assets/uploadIcon.svg" alt="Upload" style="width: 24px; height: 24px; margin-right: 8px;">
+                Upload File
+            </button>
+        </div>
+
+        <!-- Hidden Inputs for Re-selecting. Same logic shit as dashboard. -->
         <input type="file" id="fileInput" accept="image/*" style="display: none;">
         <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;">
 
-        <!-- Footer  ///To be changed soon -->
         <footer class="version-tag mt-auto">
             VERSION 0.1.4
         </footer>
-
     </main>
 
-    <!-- Machine Learning Scripts for non-internet use | tf.min.js and teachablemachine-image.min.js are both OSS -->
-    <script src="js/tf.min.js"></script>
-    <script src="js/teachablemachine-image.min.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>
-
-
-<!-- Additional Context: These are currently initial code. Inform other devs if you wish to make changes -->
-<!-- Additional Context: AI Prompt Engineering is used for optimizing this code -->

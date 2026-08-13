@@ -2,7 +2,7 @@
    style.css 
    Main stylesheet for PICS 
 
-   CSS code is still not fully optimized for production. Changes soon
+   CSS code is still not fully optimized for production. Changes soon at tsaka...45% neto AI generated w/ prompt engineering. bleh!
 */
 
 @font-face {
@@ -22,18 +22,18 @@
     --input-bg: #FAFAFA;
 }
 
-/* Global Reset */
+/* Global Reset. Ayusin ang margin para hindi sabog ang layout sa ibat ibang screen size */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
     
-    /*  custom font on everything, system fonts as fallbacks */
+    /* custom font on everything, system fonts as fallbacks if ever hindi ma-load */
     font-family: 'Google Sans Flex', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     
-    /* stops iPhones from zooming text randomly when flipped to landscape */
+    /* stops iPhones from zooming text randomly when flipped to landscape (tanginang iOS behavior yan) */
     -webkit-text-size-adjust: 100%; 
-} /* Since iPhone were somewhat strict in the browsers, a backup font will be used to load.*/
+} 
 
 body {
     background-color: var(--bg-light);
@@ -42,14 +42,14 @@ body {
     justify-content: center;
     align-items: center; 
     
-    /* using dvh to ignore annoying mobile browser URL bars */
+    /* using dvh to ignore annoying mobile browser URL bars taking up height */
     min-height: 100dvh; 
 }
 
 /* --- Main Layout Container --- */
 .app-wrapper {
     width: 100%;
-    /* 480px max keeps it feeling like a native mobile app even on desktop monitors */
+    /* 480px max keeps it feeling like a native mobile app kahit buksan sa PC monitor */
     max-width: 480px; 
     min-height: 100dvh; 
     display: flex;
@@ -66,7 +66,7 @@ body {
              env(safe-area-inset-left, 20px);
 }
 
-/* --- Brand Header Section --- */
+/* --- Brand Header Section (Mostly for login page right now) --- */
 .login-brand {
     display: flex;
     flex-direction: row; 
@@ -179,12 +179,12 @@ body {
     letter-spacing: 0.5px;
 }
 
-/* utility class from your HTML */
+/* utility class sa margin top. Wag burahin, marami apektado nito. lala niyan pag ginalaw mo pa! */
 .mt-auto {
     margin-top: auto;
 }
 
-/* --- scan.html designs --- */
+/* --- scan.html & dashboard.html Header Designs --- */
 .scan-header {
     display: flex;
     align-items: center;
@@ -268,6 +268,7 @@ body {
     object-fit: cover;
 }
 
+/* Yung 'X' button kapag pangit yung picture sa preview. Naka position: absolute to overlay it. */
 .btn-close-preview {
     position: absolute;
     top: 12px;
@@ -333,9 +334,7 @@ body {
     fill: currentColor;
 }
 
-
-
-/* --- dashboard.html --- */
+/* --- dashboard.html Empty State specific styles --- */
 .camera-placeholder {
     position: relative;
     width: 100%;
@@ -351,7 +350,7 @@ body {
     text-align: center;
 }
 
-/* Targeting Brackets */
+/* Targeting Brackets around the empty state */
 .bracket {
     position: absolute;
     width: 24px;
@@ -386,7 +385,3 @@ body {
     font-weight: 500;
     color: var(--text-muted);
 }
-
-
-/* Additional Context: These are currently initial code. Inform other devs if you wish to make changes */
-/* Additional Context: AI Prompt Engineering is used for optimizing this code */
