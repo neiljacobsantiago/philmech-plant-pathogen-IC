@@ -1,6 +1,7 @@
 /* ==========================================================================
    PICS - Plant Pathogen Image Classification System
    Main JS Controller
+    Consider this to include React JS to make it more maintainable, less line counts, and easier to read.
    ========================================================================== */
 
 const MODEL_PATH = "model/";
@@ -181,7 +182,7 @@ if (scannedImageDisplay) {
 
 /**
  * Loads the offline TM model, runs prediction on the stored image,
- * builds the probability bars, and grabs traits from asperdata.js.
+ * builds the probability bars, and grabs traits from data.js.
  * Removed the stupid onload wrapper because Base64 images load instantly.
  */
 async function runInferenceAndPopulate() {
@@ -197,6 +198,12 @@ async function runInferenceAndPopulate() {
 
     try {
         console.log("Loading AI model... please hold.");
+        
+        // --- THE IOS WEBGL FIX ---
+        // Force TensorFlow to use the CPU because Safari's GPU engine is being ass. tangina ng iOS talaga.
+        await tf.setBackend('cpu');
+        await tf.ready();
+        // -------------------------
         
         // 1. Load local model (this takes a second or two)
         const model = await tmImage.load(MODEL_PATH + "model.json", MODEL_PATH + "metadata.json");
@@ -242,7 +249,7 @@ async function runInferenceAndPopulate() {
             });
         }
 
-        // 5. Grab characteristics from asperdata.js object
+        // 5. Grab characteristics from data.js object
         if (typeof AspergillusData !== 'undefined') {
             const traits = AspergillusData[topMatch.className];
             if (traits) {
@@ -251,15 +258,16 @@ async function runInferenceAndPopulate() {
                 if (document.getElementById("charReverseColor")) document.getElementById("charReverseColor").innerText = traits.reverseColor;
                 if (document.getElementById("charMycelium")) document.getElementById("charMycelium").innerText = traits.myceliumTexture;
             } else {
-                console.warn(`Whoops, no traits found in asperdata.js for: ${topMatch.className}`);
+                console.warn(`Whoops, no traits found in data.js for: ${topMatch.className}`);
             }
         } else {
-            console.error("asperdata.js is missing! Did you link it in result.html?");
+            console.error("data.js is missing! Did you link it in result.html?");
         }
 
     } catch (err) {
         console.error("AI Model completely shit the bed:", err);
-        alert("Failed to load local model. Check the F12 console.");
+        // Force the actual error message into the alert box
+        alert("MODEL CRASH: " + err.name + " - " + err.message);
     }
 }
 

@@ -1,1 +1,33 @@
-rtthsrfh
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>PICS - Plant Pathogen Image Classification System</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <main class="app-wrapper p-20">
+
+        <!-- 
+           Gateway redirect script. 
+           Wipes old session state so users don't get stuck viewing yesterday's 
+           scan results, then bounces them straight to the dashboard. 
+        -->
+        <script>
+            // Flush stale session storage
+            sessionStorage.removeItem('pendingImage');
+            sessionStorage.removeItem('scanResults');
+
+            // Instant redirect (replace prevents back-button loops)
+            window.location.replace('dashboard.html');
+        </script>
+
+        <!-- version footer pinned to the bottom right across all pages -->
+        <footer class="version-tag mt-auto">
+            VERSION 0.1.4.2
+        </footer>
+
+    </main>
+</body>
+</html>

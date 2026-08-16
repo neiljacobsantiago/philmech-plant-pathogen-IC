@@ -3,6 +3,7 @@
    Main stylesheet for PICS 
 
    CSS code is still not fully optimized for production. Changes soon at tsaka...45% neto AI generated w/ prompt engineering. bleh!
+   Consider to change this into Tailwind CSS to make it more maintainable, less line counts, and easier to read.
 */
 
 @font-face {
@@ -36,6 +37,8 @@
 } 
 
 body {
+    width: 100%;
+    overflow-x: hidden; /* Prevents hidden elements from stretching the screen width */
     background-color: var(--bg-light);
     color: var(--text-dark);
     display: flex;
@@ -57,13 +60,13 @@ body {
     background-color: var(--bg-light);
     
     /* 
-       safe areas for modern phones so the UI doesn't hide behind the 
-       iPhone notch/dynamic island or the android home gesture bar.
+       THE FIX: max() forces the browser to pick whichever is larger: 
+       20px OR the camera cutout. This guarantees a minimum 20px gap everywhere.
     */
-    padding: env(safe-area-inset-top, 20px) 
-             env(safe-area-inset-right, 20px) 
-             env(safe-area-inset-bottom, 20px) 
-             env(safe-area-inset-left, 20px);
+    padding: max(20px, env(safe-area-inset-top)) 
+             max(20px, env(safe-area-inset-right)) 
+             max(20px, env(safe-area-inset-bottom)) 
+             max(20px, env(safe-area-inset-left));
 }
 
 /* --- Brand Header Section (Mostly for login page right now) --- */
@@ -315,7 +318,7 @@ body {
     background-color: var(--green-primary);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 36px;
     font-size: 0.85rem;
     font-weight: 800;
     letter-spacing: 0.5px;

@@ -1,6 +1,6 @@
 /**
  * Hardcoded reference data. 
- * Overkill gumamit ng IndexedDB para sa 5 items lang, wag mo na pilitin. 
+ * Arrays nalng muna para sa mga species ng Aspergillus. Tsaka na yung IndexedDB. 
  * I-lookup nalang natin 'to ng diretso sa script.js para instant load, walang await bullshit.
  */
 
