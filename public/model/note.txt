@@ -1,0 +1,32 @@
+=========================================================
+MODEL TRAINING LOG: Teachable Machine - Version 2.0
+=========================================================
+
+[DATASET METRICS]
+Total Images: 3240
+Class Distribution: 540 images per class
+
+[CLASSES TRAINED (6)]
+1. Aspergillus clavatus
+2. Aspergillus flavus
+3. Aspergillus fumigatus
+4. Aspergillus niger
+5. Aspergillus tamarii
+6. Unknown
+
+[VERDICT & CAPABILITIES]
+- Potential Accuracy: Higher than Version 1.
+- New Feature: Introduced the "Unknown" class to act as an out-of-scope bin. This successfully catches user uploads/captures that fall outside the system's target pathogens.
+
+[KNOWN ISSUES / BUGS]
+- Tri-Point Bias: The current model is heavily overfitted to "tri-point" inoculation samples.
+- Single-Point Failure: If a user scans a single-point sample (e.g., A. flavus), the model aggressively flags it as "Unknown" (typically 65%-100% confidence majority). 
+- In preliminary testing of single-point samples, the correct fungi never ranked as the primary prediction.
+
+[VERSION 2.1 ROADMAP & PATCH NOTES]
+- Objective: Re-train the model to accurately classify both tri-point and single-point samples.
+- Data Augmentation Hack (Disclaimer): There is currently a shortage of unique single-point images, specifically for 
+A. clavatus. To solve this, the dataset will be expanded by cropping/zooming in on a single colony blob from the 
+existing tri-point images. To prevent training bias, this same zooming technique will be applied evenly across all other fungi classes.
+
+=========================================================

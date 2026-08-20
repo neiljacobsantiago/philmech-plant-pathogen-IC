@@ -1,0 +1,53 @@
+1. Repository Cleanup
+Backup Legacy Files: Ilipat ang dashboard.html, result.html, scan.html, at login.html papunta sa _legacy_reference/ folder. Gawa nalang kayo ng folder.. 
+Dito kayo kukuha ng code na i-copy-paste, pero wag niyo na i-edit ang files na ito.
+
+PWA Setup: Ignore public/manifest.json at public/sw.js. Sa next sprint na natin ito gagalawin.
+
+2. Team Task Delegation
+Aleina (Core Components): Ikaw gawa dun sa src/components/. convert ang Header.tsx at FloatingDock.tsx. 
+Yung FloatingDock ay yung sticky container sa ilalim ng screen (Yung floating "Classify Another Sample" button). 
+Make sure it stays fixed at the bottom while allowing the page content to scroll behind it.
+
+Victoria (Gateway Pages): Gawin ang src/pages/Dashboard.tsx at ScanPreview.tsx. 
+translate ang old HTML sa JSX (palitan lahat ng class to className) at i-import nang tama ang SVG icons mula sa src/assets/.
+
+Riza (Results Matrix): I-set up ang Tailwind layout para sa src/pages/AnalysisResult.tsx. Kasama dito ang top match card at pathogen probability matrix bars. 
+Para sa macroscopic traits, i-keep lang ang dating vertical list layout, 
+pero gamitan ng tailwind para sa minor enhancements (e.g., better spacing, cleaner typography, subtle borders, shadows, a bit liquid glass siguro?).
+
+3. Current Sprint 
+No Logic Wiring: Walang gagalaw sa IndexedDB o Teachable Machine codes. 
+Kung hindi ito related sa Tailwind o JSX, pang next sprint na lang yan.
+
+Asset Imports: Mag-e-error ang React build kung gagamitin niyo ang standard HTML paths tulad ng <img src="assets/...">. 
+Import explicitly ang lahat ng images sa pinakataas ng respective TSX files niyo.
+
+Mag advanced self-study nalang din sa React and Tailwind.. No choice eh, pero in the end mas lilinis codebase natin.. 
+
+Later, pag okay na yung code, pwede nito na i brach sa github, then gawan niyo ng sariling name niyo para mai compare sa main para sync.
+
+ito yung steps pag i-uupload niyo yung gawa niyo
+
+Step 1: Kunin ang latest files. Bago mag-code, make sure updated ang local repo niyo sa bagong React structure.
+
+>   git checkout main
+>   git pull origin main
+
+
+Step 2: Gumawa ng sariling branch. Wag mag-code sa main branch. Gumawa ng sariling branch na naka-pangalan sa task niyo.
+
+>   git checkout -b name-<task> (e.g., git checkout -b riza-results-matrix)
+
+
+Step 3: Stage and Commit. Kapag tapos na ang Tailwind layout at walang error sa JSX, i-commit.
+
+>   git add .
+>   git commit -m "UI: Converted [Page/Component] to Tailwind"       required may "" laman dito sa loob ng double quotation mark.
+
+Step 4: Push and PR. I-push ang sariling branch at gumawa ng Pull Request (PR) sa GitHub. Wag niyo i-merge, ako ang mag-rereview at mag-a-approve.
+
+>    git push origin <branch-name> (e.g. git push origin aleina-core-components)
+
+
+(Note: Mag-attach ng screenshot ng finished screen niyo sa PR para makita ko agad kung nasunod ang design).

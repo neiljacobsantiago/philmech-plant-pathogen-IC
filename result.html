@@ -1,0 +1,103 @@
+<<<<<<< Updated upstream
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Analysis Result | PICS</title>
+    <link rel="stylesheet" href="css/style.css?v=3">
+    <style>
+        /* Embedded CSS for specific result UI elements. Nilagay ko dito para hindi na humaba yung main style.css */
+        .result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+        .back-btn { background: none; border: none; font-size: 1rem; cursor: pointer; color: #333; }
+        .img-container { position: relative; width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 15px; }
+        .img-container img { width: 100%; max-height: 220px; object-fit: cover; display: block; }
+        .badge-analyzed { position: absolute; top: 10px; right: 10px; background: #006b3f; color: white; font-size: 0.75rem; font-weight: bold; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
+        
+        .match-card { margin-bottom: 20px; }
+        .species-title { font-size: 1.8rem; font-style: italic; margin: 5px 0; color: #111; font-weight: bold; }
+        .score-badge { background: #006b3f; color: white; padding: 4px 12px; border-radius: 20px; font-weight: bold; float: right; }
+        
+        .matrix-container { margin: 20px 0; }
+        .matrix-row { margin-bottom: 10px; }
+        .matrix-label { display: flex; justify-content: space-between; font-size: 0.9rem; font-style: italic; margin-bottom: 4px; }
+        .progress-bar-bg { background: #e0e0e0; height: 8px; border-radius: 4px; overflow: hidden; }
+        .progress-bar-fill { background: #006b3f; height: 100%; width: 0%; transition: width 0.4s ease; }
+        
+        .char-card { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px; padding: 15px; margin-top: 15px; }
+        .char-item { margin-bottom: 8px; font-size: 0.9rem; }
+        .char-label { font-weight: bold; color: #495057; }
+        
+        .limitation-box { background: #fdf8f0; border: 1px solid #f5e6d3; border-radius: 8px; padding: 12px; font-size: 0.8rem; color: #6c5835; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <main class="app-wrapper p-20">
+
+        <!-- Top Navigation with working back button. -->
+        <div class="result-header">
+            <button class="back-btn" id="backToDashBtn">&larr; Back</button>
+            <span style="font-weight: bold; font-size: 0.85rem; color: #666; letter-spacing: 1px;">ANALYSIS RESULT</span>
+            <div style="width: 40px;"></div>
+        </div>
+
+        <!-- Specimen Image Preview that got processed -->
+        <div class="img-container">
+            <img id="scannedImageDisplay" src="" alt="Analyzed Specimen">
+            <span class="badge-analyzed">&check; Analyzed</span>
+        </div>
+
+        <!-- Primary Top Match. Dito i-iinject nung JS yung panalong fungal strain. -->
+        <div class="match-card">
+            <small style="color: #666; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">Top Match • Species Name</small>
+            <div>
+                <span class="score-badge" id="topScoreBadge">0%</span>
+                <h1 class="species-title" id="speciesName">Analyzing...</h1>
+            </div>
+            <small style="color: #666;">Confidence Score: <strong id="confidenceText">0%</strong></small>
+        </div>
+
+        <hr style="border: none; border-top: 1px solid #eee;">
+
+        <!-- Pathogen Probability Matrix bars will be looped here dynamically -->
+        <div class="matrix-container">
+            <small style="color: #666; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">Pathogen Probability Matrix</small>
+            <div id="matrixRows" style="margin-top: 10px;"></div>
+        </div>
+
+        <hr style="border: none; border-top: 1px solid #eee;">
+
+        <!-- Macroscopic PDA Colony Characteristics (Hinuhugot mula sa data.js hindi sa db para mabilis) -->
+        <div class="char-card">
+            <h4 style="margin: 0 0 10px 0; text-transform: uppercase; font-size: 0.85rem; color: #333;">Macroscopic Characteristics (Expected PDA Colony)</h4>
+            <div class="char-item"><span class="char-label">Growth Rate:</span> <span id="charGrowthRate">Loading...</span></div>
+            <div class="char-item"><span class="char-label">Surface Color:</span> <span id="charSurfaceColor">Loading...</span></div>
+            <div class="char-item"><span class="char-label">Reverse Color:</span> <span id="charReverseColor">Loading...</span></div>
+            <div class="char-item"><span class="char-label">Mycelium Texture:</span> <span id="charMycelium">Loading...</span></div>
+        </div>
+
+        <!-- Repeat CTA Button to clear cache and start over -->
+        <button type="button" class="btn-action" id="classifyAnotherBtn" style="background-color: #006b3f; color: white; margin-top: 25px; width: 100%;">
+            Classify Another Sample
+        </button>
+
+        <!-- Disclaimer shit so panelists won't grill us about false positives -->
+        <div class="limitation-box">
+            <strong>LIMITATION:</strong> Accuracy is affected by lighting and image quality. Model restricted to 5 target pathogens. This tool accelerates preliminary classification and does not replace standard laboratory processes.
+        </div>
+
+        <footer class="version-tag mt-auto" style="margin-top: 20px; text-align: center;">
+            VERSION 0.1.6 DEVELOPER ALPHA | MODEL VERSION 2.0
+        </footer>
+
+    </main>
+
+<!-- At the bottom of your HTML files -->
+    <script src="public/js/tf.min.js"></script>
+    <script src="public/js/teachablemachine-image.min.js"></script>
+    <script src="src/js/data.js"></script>
+    <script src="src/js/script.js"></script>
+</body>
+</html>
+>>>>>>> Stashed changes
