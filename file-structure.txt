@@ -1,0 +1,46 @@
+philmech-plant-pathogen-scanner/
+├── _legacy_reference/         # backup here vanilla files for reference ONLY
+│   ├── dashboard.html
+│   ├── login.html
+│   ├── result.html
+│   └── scan.html
+├── public/                    # Static assets & vendor scripts
+│   ├── js/
+│   │   ├── teachablemachine-image.min.js
+│   │   └── tf.min.js
+│   ├── model/                 # Teachable Machine model files
+│   ├── manifest.json          # (PWA - Ignored for this sprint)
+│   └── sw.js                  # (PWA - Ignored for this sprint)
+├── src/
+│   ├── assets/                # Explicitly imported images/icons
+│   │   ├── fonts/
+│   │   ├── analyzeIcon.svg
+│   │   ├── appLogo.png
+│   │   ├── cameraIcon.svg
+│   │   ├── uploadIcon.svg
+│   │   └── userIcon.png
+│   ├── components/            # Reusable UI elements
+│   │   ├── ConfidenceBar.tsx
+│   │   ├── FloatingDock.tsx   # Assigned to: Aleina
+│   │   └── Header.tsx         # Assigned to: Aleina
+│   ├── db/                    # IndexedDB logic (Ignored for this sprint)
+│   │   ├── database.ts
+│   │   └── schema.ts
+│   ├── hooks/
+│   │   └── useScanData.ts
+│   ├── js/                    # Core scanner logic (Ignored for this sprint)
+│   │   ├── data.js
+│   │   └── script.js
+│   ├── pages/                 # Main application screens
+│   │   ├── AnalysisResult.tsx # Assigned to: Riza
+│   │   ├── Dashboard.tsx      # Assigned to: Victoria
+│   │   └── ScanPreview.tsx    # Assigned to: Victoria
+│   ├── App.tsx                # Main router/traffic controller
+│   ├── index.css              # Global Tailwind imports
+│   └── main.tsx               # React DOM entry point
+├── important-note.txt         # Sprint instructions and Git workflow
+├── index.html                 # Main Vite HTML shell
+├── package.json
+├── README.md
+├── tailwind.config.js         # Tailwind configuration
+└── vite.config.ts             # Vite configuration
