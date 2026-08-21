@@ -9,30 +9,18 @@
 <body>
     <main class="app-wrapper p-20">
 
-<!-- Branded Header -->
-        <header class="scan-header">
-<<<<<<< Updated upstream
-            <!-- App Logo -->
-            <img src="assets/appLogo.png" alt="App Logo" style="width: 36px; height: 36px; object-fit: contain;">
-            
-        <div class="scan-header-right">
-            <div class="scan-user-info">
-                <h2>WELCOME, USER!</h2>
-                <p>Plant Pathogen Image Classification System</p>
-=======
-            <img src="src/assets/appLogo.png" alt="App Logo" style="width: 36px; height: 36px; object-fit: contain;">
-            <div class="scan-header-right">
-                <div class="scan-user-info">
-                    <h2>WELCOME, USER!</h2>
-                    <p>Plant Pathogen Image Classification System</p>
-                </div>
-                <img src="src/assets/userIcon.png" alt="User Avatar" class="profile-avatar-img">
->>>>>>> Stashed changes
-            </div>
-            
-            <img src="assets/userIcon.png" alt="User Avatar" class="profile-avatar-img">
-        </div>
-        </header>
+<!-- Single Branded Header -->
+<header class="scan-header">
+  <img src="/appLogo.png" alt="App Logo" style="width: 36px; height: 36px; object-fit: contain;">
+  <div class="scan-header-right">
+    <div class="scan-user-info">
+      <h2>WELCOME, USER!</h2>
+      <p>Plant Pathogen Image Classification System</p>
+    </div>
+    <!-- Note: Siguraduhin na nasa public/ folder ang userIcon.png -->
+    <img src="/userIcon.png" alt="User Avatar" class="profile-avatar-img">
+  </div>
+</header>
 
         <!-- Empty State UI -->
         <section class="camera-placeholder">
@@ -41,7 +29,7 @@
             <div class="bracket bracket-bl"></div>
             <div class="bracket bracket-br"></div>
             
-        <! -- TO BE CHANGED: Add a placeholder icon and text to indicate that the user should place a sample for scanning. -- >
+        <!-- TO BE CHANGED: Add a placeholder icon and text to indicate that the user should place a sample for scanning. -->
             <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <circle cx="12" cy="12" r="8"></circle>
                 <line x1="12" y1="2" x2="12" y2="6"></line>
@@ -59,7 +47,6 @@
             
 <!-- Action Buttons -->
             <div class="btn-stack">
-<<<<<<< Updated upstream
                 <button type="button" class="btn-action" id="scanCameraBtn">
                     <img src="assets/cameraIcon.svg" alt="Camera" style="width: 24px; height: 24px; margin-right: 4px;">
                     Use Camera
@@ -67,7 +54,9 @@
 
                 <button type="button" class="btn-action" id="scanUploadBtn">
                     <img src="assets/uploadIcon.svg" alt="Upload" style="width: 24px; height: 24px; margin-right: 4px;">
-=======
+                    Upload File
+                </button>
+
                 <button type="button" class="btn-action" id="dashCameraBtn">
                     <img src="src/assets/cameraIcon.svg" alt="Camera" style="width: 24px; height: 24px; margin-right: 4px;">
                     Use Camera
@@ -75,7 +64,6 @@
 
                 <button type="button" class="btn-action" id="dashUploadBtn">
                     <img src="src/assets/uploadIcon.svg" alt="Upload" style="width: 24px; height: 24px; margin-right: 4px;">
->>>>>>> Stashed changes
                     Upload File
                 </button>
                 
@@ -87,11 +75,7 @@
 
             <!-- Footer ///To be changed soon -->
             <footer class="version-tag">
-<<<<<<< Updated upstream
-                VERSION 0.1.4
-=======
                 VERSION 0.1.4 | MODEL VERSION 2.0
->>>>>>> Stashed changes
             </footer>
             
         </div>
