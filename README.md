@@ -17,3 +17,36 @@ An offline-first Progressive Web App (PWA) designed as a low-cost, serverless Ed
 *   **Functional Suitability:** The system enforces a strict high-confidence threshold (90%) for automated positive identification. Scans falling below this baseline automatically trigger system warnings that mandate confirmatory manual validation. To assist the user, the architecture automatically retrieves and displays the corresponding pre-determined cultural characteristics alongside the AI output.
 *   **Performance Efficiency:** Engineered for complete localized execution without internet latency. The optimized frontend environment and quantized AI model ensure that image processing, database queries, and inferences happen rapidly on standard client hardware without causing computational throttling or severe battery drain.
 *   **Usability:** Structured specifically as a one-handed, mobile-first assistive tool for laboratory personnel working directly with biological samples. By instantly translating raw diagnostic predictions into readable physical traits, the interface reduces physical workflow disruption and entirely bypasses the need for manual data entry.
+
+---
+
+### 👥 Project Team
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com">
+        <img src="https://github.com.png" width="90px;" alt="Neil Jacob Santiago"/><br />
+        <sub><b>Neil Jacob Santiago</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com">
+        <img src="https://github.com.png" width="90px;" alt="Cassandra Calulot"/><br />
+        <sub><b>Cassandra Calulot</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com">
+        <img src="https://github.com.png" width="90px;" alt="risxeee"/><br />
+        <sub><b>risxeee</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com">
+        <img src="https://github.com.png" width="90px;" alt="Victoria Tamundong"/><br />
+        <sub><b>Victoria Tamundong</b></sub>
+      </a>
+    </td>
+  </tr>
+</table>
