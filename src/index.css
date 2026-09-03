@@ -1,0 +1,26 @@
+@import "tailwindcss";
+@variant dark (&:where(.dark, .dark *));
+
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+html, body {
+  @apply bg-slate-200 dark:bg-black;
+  margin: 0; 
+  padding: 0;
+  width: 100%; 
+  min-height: 100vh;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#root {
+  @apply relative mx-auto flex w-full max-w-[420px] min-h-[100dvh] flex-col bg-[#f4f4f5] dark:bg-zinc-950 sm:shadow-2xl sm:border-x sm:border-slate-300 dark:sm:border-zinc-800 overflow-x-hidden;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}

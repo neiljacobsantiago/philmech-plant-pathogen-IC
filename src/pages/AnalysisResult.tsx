@@ -1,205 +1,133 @@
-type Prediction = {
-  scientific_name: string;
-  probability: number;
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useScanData } from '../hooks/useScanData';
+import { getPathogenById } from '../db/database';
+import { PathogenRecord } from '../db/schema';
+import { FloatingDock } from '../components/FloatingDock';
+
+const getMatrixColor = (score: number) => {
+  if (score >= 90) return { bg: 'bg-[#006837]', text: 'text-[#006837] dark:text-emerald-500' };
+  if (score >= 80) return { bg: 'bg-emerald-500', text: 'text-emerald-500' };
+  if (score >= 70) return { bg: 'bg-[#ffca28]', text: 'text-[#ffca28]' };
+  if (score >= 50) return { bg: 'bg-orange-500', text: 'text-orange-500' };
+  return { bg: 'bg-rose-500', text: 'text-rose-500' };
 };
 
 export default function AnalysisResult() {
-  const predictions: Prediction[] = [
-    { scientific_name: "Fusarium oxysporum", probability: 91.3 },
-    { scientific_name: "Rhizoctonia solani", probability: 5.8 },
-    { scientific_name: "Alternaria alternata", probability: 1.7 },
-    { scientific_name: "Colletotrichum gloeosporioides", probability: 0.8 },
-    { scientific_name: "Pythium spp.", probability: 0.4 },
-  ];
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { predictions, imageUrl, isAnalyzing, error } = useScanData();
+  const [characteristics, setCharacteristics] = useState<PathogenRecord | null>(null);
+  const topMatch = predictions[0] || { name: 'Unknown', score: 0 };
 
-  const topMatch = predictions[0];
+  useEffect(() => {
+    if (topMatch.name !== 'Unknown') {
+      getPathogenById(topMatch.name).then((data) => { if (data) setCharacteristics(data); });
+    }
+  }, [topMatch.name]);
+
+  if (isAnalyzing || error) {
+    return (
+      <div className="flex min-h-[100dvh] w-full flex-col items-center justify-center p-6 text-center bg-[#f4f4f5] dark:bg-zinc-950">
+        {error ? (
+          <>
+            <p className="text-lg font-bold text-rose-500">{error}</p>
+            <button onClick={() => navigate('/')} className="mt-6 rounded-lg bg-[#006837] px-8 py-3 text-sm font-bold text-white shadow-sm">Go Back</button>
+          </>
+        ) : (
+          <div className="animate-pulse text-sm font-black tracking-widest text-[#006837] uppercase">Analyzing Specimen...</div>
+        )}
+      </div>
+    );
+  }
+
+  const displayChars = characteristics || { growthRate: "N/A", surfaceColor: "N/A", reverseColor: "N/A", myceliumTexture: "N/A" };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50">
-      <div className="mx-auto max-w-4xl px-5 py-8">
-
-        {/* Header */}
-        <div className="mb-6 flex items-center justify-between">
-          <button
-            id="backToDashBtn"
-            type="button"
-            onClick={() => window.history.back()}
-            className="text-sm font-medium text-slate-700 transition hover:text-emerald-700"
-          >
-            ← Back
+    <div className="relative flex min-h-[100dvh] w-full flex-col text-slate-900 dark:text-zinc-100 bg-[#f4f4f5] dark:bg-zinc-950">
+      
+      <div className="flex-1 overflow-y-auto overflow-x-hidden pb-36">
+        
+        <header className="sticky top-0 z-40 flex items-center bg-[#f4f4f5]/95 px-5 pt-12 pb-4 backdrop-blur-md border-b border-slate-200 dark:border-zinc-800 dark:bg-zinc-950/95">
+          <button onClick={() => navigate('/')} className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-800 shadow-sm transition active:scale-95 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
+            <svg className="h-5 w-5 pr-0.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/></svg>
           </button>
+          <span className="ml-4 text-lg font-black text-slate-900 dark:text-white">Analysis Result</span>
+        </header>
 
-          <span className="text-xs font-bold tracking-[0.2em] text-slate-500">
-            ANALYSIS RESULT
-          </span>
-
-          <div className="w-10" />
-        </div>
-
-        {/* Image Preview */}
-        <div className="relative mb-6 overflow-hidden rounded-2xl border border-white/50 bg-white/60 shadow-lg backdrop-blur-md">
-          <img
-            id="scannedImageDisplay"
-            src="https://placehold.co/1200x400"
-            alt="Analyzed Specimen"
-            className="block max-h-[220px] w-full object-cover"
-          />
-
-          <span className="absolute right-3 top-3 rounded-full bg-emerald-700 px-3 py-1 text-xs font-bold uppercase text-white shadow">
-            ✓ Analyzed
-          </span>
-        </div>
-
-        {/* Top Match Card */}
-        <div className="mb-6 rounded-3xl border border-white/50 bg-white/60 p-6 shadow-xl backdrop-blur-md">
-
-          <p className="text-xs uppercase tracking-wider text-slate-500">
-            Top Match • Species Name
-          </p>
-
-          <div className="mt-3 flex items-start justify-between gap-4">
-
-            <div>
-              <h1
-                id="speciesName"
-                className="text-3xl font-bold italic text-slate-900"
-              >
-                {topMatch.scientific_name}
-              </h1>
-
-              <p className="mt-2 text-sm text-slate-500">
-                Confidence Score:{" "}
-                <strong
-                  id="confidenceText"
-                  className="text-slate-700"
-                >
-                  {topMatch.probability}%
-                </strong>
-              </p>
-            </div>
-
-            <span
-              id="topScoreBadge"
-              className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-bold text-white shadow"
-            >
-              {topMatch.probability}%
-            </span>
-
+        {/* Simplest way to force 20px padding universally: px-5 on the parent */}
+        <main className="w-full flex flex-col gap-5 px-5 pt-6 pb-6">
+          
+          <div className="w-full relative h-64 overflow-hidden rounded-lg bg-white shadow-sm border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900">
+            <img src={imageUrl || ''} alt="Specimen" className="h-full w-full object-cover" />
+            <div className="absolute right-3 top-3 rounded-lg bg-[#006837] px-3 py-1.5 text-[10px] font-black tracking-widest text-white shadow-sm uppercase">✓ Analyzed</div>
           </div>
-        </div>
 
-        {/* Divider */}
-        <div className="my-6 h-px bg-slate-200" />
+          <div className="w-full flex items-center justify-between rounded-lg bg-white p-5 shadow-sm border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900">
+            <div className="flex flex-1 flex-col pr-4 break-words">
+              <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Top Match</span>
+              <h1 className="mt-1 text-[26px] font-black italic leading-tight text-slate-900 dark:text-white">{topMatch.name}</h1>
+            </div>
+            <div className="flex shrink-0 flex-col items-center justify-center rounded-lg bg-[#006837] px-4 py-3 text-white shadow-md">
+              <span className="text-2xl font-black">{topMatch.score}%</span>
+              <span className="mt-1 text-[7px] font-bold uppercase tracking-widest opacity-90">Confidence</span>
+            </div>
+          </div>
 
-        {/* Probability Matrix */}
-        <div className="mb-6">
+          <div className="w-full rounded-lg bg-white p-5 shadow-sm border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900">
+            <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Pathogen Probability Matrix</span>
+            
+            <div className="mt-5 flex flex-col gap-4">
+              {predictions.map((item, index) => {
+                const colors = getMatrixColor(item.score);
+                return (
+                  <div key={item.name} className="flex flex-col gap-2">
+                    <div className="flex justify-between items-center gap-3">
+                      <span className={`flex-1 break-words text-[15px] leading-snug ${index === 0 ? 'font-black text-slate-900 dark:text-white' : 'font-bold text-slate-600 dark:text-zinc-400'}`}>
+                        {item.name}
+                      </span>
+                      <span className={`${colors.text} shrink-0 text-[14px] font-bold`}>{item.score}%</span>
+                    </div>
+                    <div className="h-2 w-full overflow-hidden rounded-lg bg-slate-100 dark:bg-zinc-800">
+                      <div className={`h-full rounded-lg ${colors.bg}`} style={{ width: `${Math.max(item.score, 1)}%` }} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
 
-          <p className="mb-4 text-xs uppercase tracking-wider text-slate-500">
-            Pathogen Probability Matrix
-          </p>
-
-          <div id="matrixRows" className="space-y-4">
-
-            {predictions.map((prediction) => (
-              <div
-                key={prediction.scientific_name}
-                className="rounded-xl border border-white/50 bg-white/50 p-4 shadow-sm backdrop-blur-sm"
-              >
-                <div className="mb-2 flex justify-between text-sm italic">
-                  <span>{prediction.scientific_name}</span>
-                  <span>{prediction.probability}%</span>
+          <div className="w-full">
+            <span className="mb-3 block px-1 text-[10px] font-bold tracking-widest text-slate-400 uppercase">Macroscopic Characteristics</span>
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { icon: '⚡', label: 'Growth Rate', val: displayChars.growthRate },
+                { icon: '🟡', label: 'Surface Color', val: displayChars.surfaceColor },
+                { icon: '🔆', label: 'Reverse Color', val: displayChars.reverseColor },
+                { icon: '🔬', label: 'Texture', val: displayChars.myceliumTexture }
+              ].map(char => (
+                <div key={char.label} className="flex flex-col rounded-lg bg-white p-5 shadow-sm border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900">
+                  <span className="text-2xl">{char.icon}</span>
+                  <span className="mt-4 block text-[9px] font-bold tracking-widest text-slate-400 uppercase">{char.label}</span>
+                  <p className="mt-1.5 break-words text-[13px] font-black leading-tight text-slate-800 dark:text-zinc-200">{char.val}</p>
                 </div>
-
-                <div className="h-2 overflow-hidden rounded-full bg-slate-200">
-                  <div
-                    className="h-full rounded-full bg-emerald-700 transition-all duration-500"
-                    style={{
-                      width: `${prediction.probability}%`,
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
-
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Divider */}
-        <div className="my-6 h-px bg-slate-200" />
-
-        {/* Macroscopic Characteristics */}
-        <div className="rounded-2xl border border-white/50 bg-white/60 p-5 shadow-md backdrop-blur-md">
-
-          <h4 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-700">
-            Macroscopic Characteristics (Expected PDA Colony)
-          </h4>
-
-          <div className="space-y-3 text-sm">
-
-            <div className="border-b border-slate-100 pb-2">
-              <span className="font-semibold text-slate-700">
-                Growth Rate:
-              </span>{" "}
-              <span id="charGrowthRate">
-                Fast Growing
-              </span>
+          <div className="w-full flex flex-col rounded-lg bg-slate-200/50 p-5 dark:bg-zinc-900/50 border border-transparent dark:border-zinc-800/50">
+            <div className="flex items-center gap-2">
+              <svg className="h-4 w-4 shrink-0 text-slate-500 dark:text-zinc-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+              <span className="text-[10px] font-bold tracking-widest text-slate-700 uppercase dark:text-zinc-300">Limitation</span>
             </div>
-
-            <div className="border-b border-slate-100 pb-2">
-              <span className="font-semibold text-slate-700">
-                Surface Color:
-              </span>{" "}
-              <span id="charSurfaceColor">
-                White to Pink
-              </span>
-            </div>
-
-            <div className="border-b border-slate-100 pb-2">
-              <span className="font-semibold text-slate-700">
-                Reverse Color:
-              </span>{" "}
-              <span id="charReverseColor">
-                Purple
-              </span>
-            </div>
-
-            <div>
-              <span className="font-semibold text-slate-700">
-                Mycelium Texture:
-              </span>{" "}
-              <span id="charMycelium">
-                Cottony
-              </span>
-            </div>
-
+            <p className="mt-2 text-[11px] font-medium leading-relaxed text-slate-500 dark:text-zinc-400">
+              Accuracy is affected by lighting and image quality. Model restricted to 5 early-stage pathogens. This tool accelerates preliminary classification and does not replace standard laboratory process.
+            </p>
           </div>
-        </div>
-
-        {/* Button */}
-        <button
-          id="classifyAnotherBtn"
-          type="button"
-          className="mt-6 w-full rounded-xl bg-emerald-700 px-5 py-3 font-semibold text-white shadow-md transition hover:bg-emerald-800"
-        >
-          Classify Another Sample
-        </button>
-
-        {/* Limitation */}
-        <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
-
-          <strong>LIMITATION:</strong> Accuracy is affected by
-          lighting and image quality. Model restricted to 5 target
-          pathogens. This tool accelerates preliminary classification
-          and does not replace standard laboratory processes.
-
-        </div>
-
-        {/* Footer */}
-        <footer className="mt-5 text-center text-xs text-slate-400">
-          VERSION 0.1.6  | MODEL VERSION 2.0
-        </footer>
-
+        </main>
       </div>
-    </main>
+
+      <FloatingDock onCameraClick={() => navigate('/')} onUploadClick={() => navigate('/')} />
+    </div>
   );
 }
