@@ -46,9 +46,14 @@ export default function AnalysisResult() {
   return (
     <div className="relative flex min-h-[100dvh] w-full flex-col text-slate-900 dark:text-zinc-100 bg-[#f4f4f5] dark:bg-zinc-950">
       
-      <div className="flex-1 overflow-y-auto overflow-x-hidden pb-36">
-        
-        <header className="sticky top-0 z-40 flex items-center bg-[#f4f4f5]/95 px-5 pt-12 pb-4 backdrop-blur-md border-b border-slate-200 dark:border-zinc-800 dark:bg-zinc-950/95">
+      <div
+        className="flex-1 overflow-y-auto overflow-x-hidden"
+        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 6rem)' }}
+      >
+        <header
+          className="sticky top-0 z-40 flex items-center bg-[#f4f4f5]/95 px-5 pb-4 backdrop-blur-md border-b border-slate-200 dark:border-zinc-800 dark:bg-zinc-950/95"
+          style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 1rem)' }}
+        >
           <button onClick={() => navigate('/')} className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-800 shadow-sm transition active:scale-95 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
             <svg className="h-5 w-5 pr-0.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/></svg>
           </button>
@@ -95,10 +100,25 @@ export default function AnalysisResult() {
                 );
               })}
             </div>
+
+            <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t border-slate-100 pt-4 dark:border-zinc-800">
+              {[
+                { color: 'bg-[#006837]', label: '≥ 90%' },
+                { color: 'bg-emerald-500', label: '80-89%' },
+                { color: 'bg-[#ffca28]', label: '70-79%' },
+                { color: 'bg-orange-500', label: '50-69%' },
+                { color: 'bg-rose-500', label: '< 50%' },
+              ].map((legend) => (
+                <span key={legend.label} className="flex items-center gap-1.5 text-[10px] font-bold text-slate-500 dark:text-zinc-400">
+                  <span className={`h-2 w-2 rounded-full ${legend.color}`} />
+                  {legend.label}
+                </span>
+              ))}
+            </div>
           </div>
 
           <div className="w-full">
-            <span className="mb-3 block px-1 text-[10px] font-bold tracking-widest text-slate-400 uppercase">Macroscopic Characteristics</span>
+            <span className="mb-3 block px-1 text-[10px] font-bold tracking-widest text-slate-400 uppercase">Cultural Characteristics</span>
             <div className="grid grid-cols-2 gap-4">
               {[
                 { icon: '⚡', label: 'Growth Rate', val: displayChars.growthRate },

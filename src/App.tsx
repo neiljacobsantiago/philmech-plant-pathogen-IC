@@ -14,7 +14,7 @@ export default function App() {
 
   if (isInitializing) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-white transition-colors duration-300">
+      <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-white transition-colors duration-300">
         <div className="relative flex items-center justify-center">
           <div className="absolute h-32 w-32 animate-ping rounded-full bg-[#006837]/20"></div>
           <img src={appLogo} alt="PathoScan Logo" className="relative z-10 h-24 w-24 drop-shadow-xl" />

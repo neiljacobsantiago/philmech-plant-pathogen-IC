@@ -9,10 +9,10 @@
 
 html, body {
   @apply bg-slate-200 dark:bg-black;
-  margin: 0; 
+  margin: 0;
   padding: 0;
-  width: 100%; 
-  min-height: 100vh;
+  width: 100%;
+  min-height: 100dvh;
   -webkit-tap-highlight-color: transparent;
 }
 
