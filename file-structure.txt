@@ -9,8 +9,8 @@ philmech-plant-pathogen-scanner/
 │   │   ├── teachablemachine-image.min.js
 │   │   └── tf.min.js
 │   ├── model/                 # Teachable Machine model files
-│   ├── manifest.json          # (PWA - Ignored for this sprint)
-│   └── sw.js                  # (PWA - Ignored for this sprint)
+│   ├── manifest.json          # (PWA - In scope this sprint)
+│   └── sw.js                  # (PWA - In scope this sprint)
 ├── src/
 │   ├── assets/                # Explicitly imported images/icons
 │   │   ├── fonts/
@@ -23,7 +23,7 @@ philmech-plant-pathogen-scanner/
 │   │   ├── ConfidenceBar.tsx
 │   │   ├── FloatingDock.tsx   # Assigned to: Aleina
 │   │   └── Header.tsx         # Assigned to: Aleina
-│   ├── db/                    # IndexedDB logic (Ignored for this sprint)
+│   ├── db/                    # IndexedDB logic (In scope this sprint)
 │   │   ├── database.ts
 │   │   └── schema.ts
 │   ├── hooks/
