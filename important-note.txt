@@ -2,7 +2,7 @@
 Backup Legacy Files: Ilipat ang dashboard.html, result.html, scan.html, at login.html papunta sa _legacy_reference/ folder. Gawa nalang kayo ng folder.. 
 Dito kayo kukuha ng code na i-copy-paste, pero wag niyo na i-edit ang files na ito.
 
-PWA Setup: Ignore public/manifest.json at public/sw.js. Sa next sprint na natin ito gagalawin.
+PWA Setup: UPDATE - In-scope na ngayon ang public/manifest.json at public/sw.js. I-consider na sa current sprint.
 
 2. Team Task Delegation
 Aleina (Core Components): Ikaw gawa dun sa src/components/. convert ang Header.tsx at FloatingDock.tsx. 
@@ -17,8 +17,8 @@ Para sa macroscopic traits, i-keep lang ang dating vertical list layout,
 pero gamitan ng tailwind para sa minor enhancements (e.g., better spacing, cleaner typography, subtle borders, shadows, a bit liquid glass siguro?).
 
 3. Current Sprint 
-No Logic Wiring: Walang gagalaw sa IndexedDB o Teachable Machine codes. 
-Kung hindi ito related sa Tailwind o JSX, pang next sprint na lang yan.
+No Logic Wiring: UPDATE - In-scope na rin ngayon ang IndexedDB (src/db/database.ts, schema.ts). Teachable Machine codes lang ang hindi pa gagalawin.
+Kung hindi ito related sa Tailwind, JSX, PWA, o IndexedDB, pang next sprint na lang yan.
 
 Asset Imports: Mag-e-error ang React build kung gagamitin niyo ang standard HTML paths tulad ng <img src="assets/...">. 
 Import explicitly ang lahat ng images sa pinakataas ng respective TSX files niyo.
