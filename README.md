@@ -1,52 +1,19 @@
-### PHilMech - Laboratory Services Division Pathogen Classifier
+# PHilMech Pathogen Classifier
 
-An offline-first Progressive Web App (PWA) designed as a low-cost, serverless Edge AI tool for localized fungal classification.
+This is a strictly offline Progressive Web App (PWA) built to classify fungal pathogens. It runs entirely on the edge. No servers, no API calls, no cloud data harvesting. It is engineered explicitly for air-gapped laboratory environments. 
 
-**System Architecture**
-*   **Core Framework:** A modern Single Page Application (SPA) operating natively within the client browser, currently transitioning into a fully component-based structure.
-*   **Machine Learning:** Lightweight Edge AI executing image classification natively on-device, completely bypassing external server dependencies.
-*   **Local Storage:** Native browser-based storage structured specifically for an air-gapped laboratory environment. It utilizes a strictly normalized database schema to manage biological hierarchies and physical traits without data duplication. No cloud retention or historical data logging is enabled in this build.
+## Architecture & Infrastructure
+* **Frontend:** A modern SPA currently migrating to a strict, component-driven architecture. 
+* **Edge AI:** Lightweight image classification executing natively on-device. It processes inference locally without relying on external network dependencies.
+* **Storage:** Air-gapped, browser-native storage. The database schema is strictly normalized to map biological hierarchies without data duplication. We do not log historical scans or retain cloud backups.
 
-**UI/UX & Design System**
-*   **Theme & Styling:** Utilizes a modern, responsive styling framework to create a fluid "liquid glass" layout, incorporating subtle borders, semi-glassmorphism blurs, and enhanced typography. The color palette relies on high-contrast minimalist tones paired with a distinct organizational accent color.
-*   **Primary Workflow:** A mobile-optimized, minimal-click capture and analysis loop. Core navigation and actions remain persistently accessible via a fixed floating dock at the bottom of the screen.
-*   **Data Visualization:** Analysis results are structured into modular interface components: a primary identification card, visual probability bars mapping the AI's confidence spread, and clean vertical lists for cross-referencing physical traits.
-*   **Camera Integration:** Native smartphone camera hooks equipped with a local device gallery fallback.
+## Interface & Workflow
+* **Mobile-First UX:** Built for one-handed operation. Lab techs handle physical samples and petri dishes; they need a frictionless capture-and-analysis loop, not nested menus. Core actions are locked to a fixed bottom dock.
+* **Styling:** High-contrast minimalist typography layered over a responsive "liquid glass" (glassmorphism) layout. Clean, readable, and gets out of the way.
+* **Data Visualization:** Modular UI components break down the analysis. It outputs a primary ID card, raw probability bars for the AI's confidence spread, and clean lists for cross-referencing physical traits.
+* **Hardware:** Native camera hooks with a local gallery fallback.
 
-**ISO/IEC 25010 Software Quality Compliance**
-*   **Functional Suitability:** The system enforces a strict high-confidence threshold (90%) for automated positive identification. Scans falling below this baseline automatically trigger system warnings that mandate confirmatory manual validation. To assist the user, the architecture automatically retrieves and displays the corresponding pre-determined cultural characteristics alongside the AI output.
-*   **Performance Efficiency:** Engineered for complete localized execution without internet latency. The optimized frontend environment and quantized AI model ensure that image processing, database queries, and inferences happen rapidly on standard client hardware without causing computational throttling or severe battery drain.
-*   **Usability:** Structured specifically as a one-handed, mobile-first assistive tool for laboratory personnel working directly with biological samples. By instantly translating raw diagnostic predictions into readable physical traits, the interface reduces physical workflow disruption and entirely bypasses the need for manual data entry.
-
----
-
-### 👥 Project Team
-
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://github.com">
-        <img src="https://github.com.png" width="90px;" alt="Neil Jacob Santiago"/><br />
-        <sub><b>Neil Jacob Santiago</b></sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com">
-        <img src="https://github.com.png" width="90px;" alt="Cassandra Calulot"/><br />
-        <sub><b>Cassandra Calulot</b></sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com">
-        <img src="https://github.com.png" width="90px;" alt="risxeee"/><br />
-        <sub><b>risxeee</b></sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com">
-        <img src="https://github.com.png" width="90px;" alt="Victoria Tamundong"/><br />
-        <sub><b>Victoria Tamundong</b></sub>
-      </a>
-    </td>
-  </tr>
-</table>
+## ISO/IEC 25010 Compliance Guardrails
+* **Functional Suitability:** The model enforces a hard 90% confidence threshold. Anything lower immediately triggers a manual validation warning. The system automatically fetches pre-determined cultural characteristics alongside the prediction to force human cross-checking.
+* **Performance Efficiency:** Zero internet latency. The frontend and quantized AI model are optimized to process queries and inferences rapidly on standard client hardware without throttling the CPU or killing the battery.
+* **Usability:** It instantly translates raw diagnostic predictions into readable physical traits. This kills the need for manual data entry and minimizes workflow disruption on the lab floor.
