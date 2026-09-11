@@ -24,3 +24,9 @@ html, body {
   width: 0px;
   background: transparent;
 }
+
+.motion-reduce *, .motion-reduce *::before, .motion-reduce *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}

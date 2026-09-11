@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, ChangeEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useScanData } from '../hooks/useScanData';
 import { getPathogenById } from '../db/database';
@@ -18,6 +18,15 @@ export default function AnalysisResult() {
   const location = useLocation();
   const { predictions, imageUrl, isAnalyzing, error } = useScanData();
   const [characteristics, setCharacteristics] = useState<PathogenRecord | null>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
+
+  const handleRescan = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) navigate('/result', { state: { imageFile: file }, replace: true });
+    e.target.value = '';
+  };
+
   const topMatch = predictions[0] || { name: 'Unknown', score: 0 };
 
   useEffect(() => {
@@ -35,7 +44,7 @@ export default function AnalysisResult() {
             <button onClick={() => navigate('/')} className="mt-6 rounded-lg bg-[#006837] px-8 py-3 text-sm font-bold text-white shadow-sm">Go Back</button>
           </>
         ) : (
-          <div className="animate-pulse text-sm font-black tracking-widest text-[#006837] uppercase">Analyzing Specimen...</div>
+          <div className="animate-pulse text-sm font-black tracking-widest text-[#006837] uppercase">Analyzing Pathogen...</div>
         )}
       </div>
     );
@@ -121,10 +130,10 @@ export default function AnalysisResult() {
             <span className="mb-3 block px-1 text-[10px] font-bold tracking-widest text-slate-400 uppercase">Cultural Characteristics</span>
             <div className="grid grid-cols-2 gap-4">
               {[
-                { icon: '⚡', label: 'Growth Rate', val: displayChars.growthRate },
-                { icon: '🟡', label: 'Surface Color', val: displayChars.surfaceColor },
-                { icon: '🔆', label: 'Reverse Color', val: displayChars.reverseColor },
-                { icon: '🔬', label: 'Texture', val: displayChars.myceliumTexture }
+                { icon: '', label: 'Growth Rate', val: displayChars.growthRate },
+                { icon: '', label: 'Surface Color', val: displayChars.surfaceColor },
+                { icon: '', label: 'Reverse Color', val: displayChars.reverseColor },
+                { icon: '', label: 'Texture', val: displayChars.myceliumTexture }
               ].map(char => (
                 <div key={char.label} className="flex flex-col rounded-lg bg-white p-5 shadow-sm border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900">
                   <span className="text-2xl">{char.icon}</span>
@@ -141,13 +150,19 @@ export default function AnalysisResult() {
               <span className="text-[10px] font-bold tracking-widest text-slate-700 uppercase dark:text-zinc-300">Limitation</span>
             </div>
             <p className="mt-2 text-[11px] font-medium leading-relaxed text-slate-500 dark:text-zinc-400">
-              Accuracy is affected by lighting and image quality. Model restricted to 5 early-stage pathogens. This tool accelerates preliminary classification and does not replace standard laboratory process.
+              Accuracy is affected by lighting and image quality. Model restricted to 5-7 early-to-mature stage pathogens. This tool accelerates preliminary classification and does not replace standard laboratory process.
             </p>
           </div>
         </main>
       </div>
 
-      <FloatingDock onCameraClick={() => navigate('/')} onUploadClick={() => navigate('/')} />
+      <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleRescan} />
+      <input ref={galleryInputRef} type="file" accept="image/*" className="hidden" onChange={handleRescan} />
+
+      <FloatingDock
+        onCameraClick={() => cameraInputRef.current?.click()}
+        onUploadClick={() => galleryInputRef.current?.click()}
+      />
     </div>
   );
 }

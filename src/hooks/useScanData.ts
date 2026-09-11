@@ -1,11 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-
-declare global {
-  interface Window { tmImage: any; }
-}
-
-export type PathogenScore = { name: string; score: number; isTop?: boolean; };
+import { getModel } from '../utils/modelLoader';
+import { saveSession, loadSession } from '../db/database';
+import { PathogenScore } from '../db/schema';
 
 export function useScanData() {
   const location = useLocation();
@@ -18,33 +15,37 @@ export function useScanData() {
     let activeUrl: string | null = null;
 
     async function analyzeImage() {
+      setIsAnalyzing(true);
+      setError(null);
       try {
-        // Grab the file synchronously from React Router state
-        const imageFile = location.state?.imageFile;
-        if (!imageFile) throw new Error('No image found. Please go back and capture a new photo.');
+        const imageFile = location.state?.imageFile as File | undefined;
 
-        activeUrl = URL.createObjectURL(imageFile);
-        setImageUrl(activeUrl);
+        if (imageFile) {
+          activeUrl = URL.createObjectURL(imageFile);
+          setImageUrl(activeUrl);
 
-        const imgElement = new Image();
-        imgElement.src = activeUrl;
-        await new Promise((resolve) => { imgElement.onload = resolve; });
+          const imgElement = new Image();
+          imgElement.src = activeUrl;
+          await new Promise((resolve) => { imgElement.onload = resolve; });
 
-        if (!window.tmImage) throw new Error('Teachable Machine library failed to load.');
+          const model = await getModel();
+          const rawPredictions = await model.predict(imgElement);
 
-        const modelURL = '/model/model.json';
-        const metadataURL = '/model/metadata.json';
-        const model = await window.tmImage.load(modelURL, metadataURL);
+          const formatted = rawPredictions
+            .map((p: any) => ({ name: p.className, score: Math.round(p.probability * 100) }))
+            .sort((a: PathogenScore, b: PathogenScore) => b.score - a.score);
 
-        const rawPredictions = await model.predict(imgElement);
+          if (formatted.length > 0) formatted[0].isTop = true;
 
-        const formatted = rawPredictions
-          .map((p: any) => ({ name: p.className, score: Math.round(p.probability * 100) }))
-          .sort((a: PathogenScore, b: PathogenScore) => b.score - a.score);
-
-        if (formatted.length > 0) formatted[0].isTop = true;
-
-        setPredictions(formatted);
+          setPredictions(formatted);
+          await saveSession(imageFile, formatted);
+        } else {
+          const saved = await loadSession();
+          if (!saved) throw new Error('No image found. Please go back and capture a new photo.');
+          activeUrl = URL.createObjectURL(saved.imageFile);
+          setImageUrl(activeUrl);
+          setPredictions(saved.predictions);
+        }
       } catch (err) {
         console.error(err);
         setError(err instanceof Error ? err.message : 'Analysis failed to execute.');

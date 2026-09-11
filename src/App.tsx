@@ -21,7 +21,7 @@ export default function App() {
         </div>
         <h1 className="mt-8 text-4xl font-black tracking-tight text-[#006837] dark:text-emerald-500">PathoScan</h1>
         <p className="mt-3 animate-pulse text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-          Initializing Engine...
+          Application is loading
         </p>
       </div>
     );

@@ -1,5 +1,5 @@
 {
-  "name": "philmech-plant-pathogen-ic",
+  "name": "PathoScan",
   "version": "1.0.0",
   "private": true,
   "scripts": {

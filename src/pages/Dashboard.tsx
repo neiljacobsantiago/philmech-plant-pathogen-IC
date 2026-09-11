@@ -36,7 +36,7 @@ export default function Dashboard() {
           <div className="relative flex items-center gap-3">
             <img src={appLogo} alt="Logo" className="h-12 w-12 object-contain" />
             <div className="flex flex-col text-white">
-              <span className="text-[12px] font-extrabold tracking-widest text-white/90 uppercase">PICS</span>
+              <span className="text-[12px] font-extrabold tracking-widest text-white/90 uppercase">PathoScan</span>
               <h1 className="text-xl font-bold tracking-tight leading-tight">{currentDate}</h1>
             </div>
           </div>

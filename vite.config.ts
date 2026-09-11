@@ -10,7 +10,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'PhilMech Plant Pathogen IC',
+        name: 'PathoScan',
         short_name: 'PICS',
         theme_color: '#006b3f',
         icons: [

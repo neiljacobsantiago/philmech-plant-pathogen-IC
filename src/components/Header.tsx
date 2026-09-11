@@ -10,8 +10,8 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  title = 'WELCOME, USER!',
-  subtitle = 'Plant Pathogen Image Classification System',
+  title = 'WELCOME!',
+  subtitle = 'PathoScan: Your Pathogen Analysis Companion',
   showBack = false,
   onBack,
 }) => {
