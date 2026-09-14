@@ -1,4 +1,4 @@
-# PHilMech Pathogen Classifier
+# PHilMech Pathogen Image Classifier
 
 This is a strictly offline Progressive Web App (PWA) built to classify fungal pathogens. It runs entirely on the edge. No servers, no API calls, no cloud data harvesting. It is engineered explicitly for air-gapped laboratory environments. 
 
