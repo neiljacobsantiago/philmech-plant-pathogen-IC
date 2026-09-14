@@ -3,39 +3,46 @@ import { PathogenRecord, PathogenScore } from './schema';
 const DB_NAME = 'PICS_DB';
 const STORE_NAME = 'pathogens';
 const SESSION_STORE = 'session';
-const DB_VERSION = 2; // bumped from 1 — adds the session store only, existing pathogen data is untouched
+const DB_VERSION = 3; // bumped from 2 — clavatus removed, terreus added, all 5 characteristic sets refreshed from client's Fungal_ID_data.docx (PDA rows only). If v3 was already pushed to any device before this content refresh, bump to 4.
 
-// Embedded reference seed data so no external data.js is required
+// Source: PhilMech LSD "Fungal_ID_data.docx", PDA rows only (MEA/CYA rows in the source are not used here).
+// Where a species had multiple PDA trials in the source doc with no stated canonical run,
+// the most complete trial was used as the primary value; alternates are noted per entry.
 const InitialPathogenRecords: Record<string, Omit<PathogenRecord, 'id'>> = {
     "Aspergillus flavus": {
-        growthRate: "Rapid (3-5 days)",
-        surfaceColor: "Yellowish-green to olive green",
-        reverseColor: "Pale yellow to gold",
-        myceliumTexture: "Velvety to floccose, distinct white margin"
+        // Primary: trial w/ clear exudates noted (31.94–63.00mm). Alternates in source doc:
+        // (a) 32.29–58.71mm, green surface, brown/smooth reverse, white mycelium
+        // (b) 33.47–62.14mm, white-to-green surface, white/smooth reverse, white mycelium
+        growthRate: "Rapid (32–63 mm colony diam. on PDA)",
+        surfaceColor: "Green to dark green",
+        reverseColor: "Clear, smooth",
+        myceliumTexture: "White, with clear exudates"
     },
-    "Aspergillus clavatus": {
-        growthRate: "Moderate to Rapid (4-6 days)",
-        surfaceColor: "Blue-green to slate green",
-        reverseColor: "White to pale tan",
-        myceliumTexture: "Dense, felty, white marginal zone"
+    "Aspergillus terreus": {
+        growthRate: "Rapid (29–65 mm colony diam. on PDA)",
+        surfaceColor: "Brown",
+        reverseColor: "Clear, slightly wrinkled",
+        myceliumTexture: "White"
     },
     "Aspergillus fumigatus": {
-        growthRate: "Rapid (2-4 days)",
-        surfaceColor: "Smoky green to dark grey-green",
-        reverseColor: "White to yellowish-tan",
-        myceliumTexture: "Velvety to powdery"
+        growthRate: "Rapid (33–64 mm colony diam. on PDA)",
+        surfaceColor: "Pale green",
+        reverseColor: "Brown, wrinkled",
+        myceliumTexture: "White"
     },
     "Aspergillus tamarii": {
-        growthRate: "Rapid (3-5 days)",
-        surfaceColor: "Yellowish-brown to deep olive-brown",
-        reverseColor: "Colorless to pale brown",
-        myceliumTexture: "Loose, cottony to granular"
+        // Primary: 29.96–54.82mm trial. Alternate in source doc:
+        // 32.98–57.83mm, dark green surface, light brown/wrinkled reverse, green mycelium
+        growthRate: "Moderately rapid (30–55 mm colony diam. on PDA)",
+        surfaceColor: "Dark green",
+        reverseColor: "Brown, slightly wrinkled",
+        myceliumTexture: "White"
     },
     "Aspergillus niger": {
-        growthRate: "Very Rapid (2-4 days)",
-        surfaceColor: "Dense black to dark brown",
-        reverseColor: "Pale yellow to white",
-        myceliumTexture: "Carbonaceous, submerged white hyphae"
+        growthRate: "Rapid (31–62 mm colony diam. on PDA)",
+        surfaceColor: "Black",
+        reverseColor: "Black, smooth",
+        myceliumTexture: "White"
     }
 };
 
@@ -43,15 +50,20 @@ export const initDB = (): Promise<IDBDatabase> => {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
 
-        request.onupgradeneeded = (event) => {
+    request.onupgradeneeded = (event) => {
       const db = (event.target as IDBOpenDBRequest).result;
+      const tx = (event.target as IDBOpenDBRequest).transaction!;
 
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        const store = db.createObjectStore(STORE_NAME, { keyPath: 'id' });
-        Object.entries(InitialPathogenRecords).forEach(([key, value]) => {
-          store.put({ id: key, ...value });
-        });
-      }
+      const store = db.objectStoreNames.contains(STORE_NAME)
+        ? tx.objectStore(STORE_NAME)
+        : db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+
+      // Clear + reseed on every version bump so retired/changed species don't
+      // linger on devices that already ran an older DB_VERSION.
+      store.clear();
+      Object.entries(InitialPathogenRecords).forEach(([key, value]) => {
+        store.put({ id: key, ...value });
+      });
 
       if (!db.objectStoreNames.contains(SESSION_STORE)) {
         db.createObjectStore(SESSION_STORE, { keyPath: 'id' });
