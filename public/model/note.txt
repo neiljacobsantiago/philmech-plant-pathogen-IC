@@ -1,32 +1,56 @@
-=========================================================
-MODEL TRAINING LOG: Teachable Machine - Version 2.0
-=========================================================
+MODEL TRAINING LOG: Teachable Machine - Version 3.0
+
 
 [DATASET METRICS]
 Total Images: 3240
-Class Distribution: 540 images per class
+Class Distribution: 540
 
 [CLASSES TRAINED (6)]
-1. Aspergillus clavatus
-2. Aspergillus flavus
-3. Aspergillus fumigatus
-4. Aspergillus niger
-5. Aspergillus tamarii
+1. Aspergillus flavus
+2. Aspergillus fumigatus
+3. Aspergillus niger
+4. Aspergillus tamarii
+5. Aspergillus terreus
 6. Unknown
 
+[CHANGE FROM VERSION 2.0]
+- Aspergillus clavatus removed, Aspergillus terreus added.
+- Reason: environmental growth constraints (rainy season climate impact on
+  clavatus cultivation) and dataset feasibility — see SCRUM update 9/12.
+
 [VERDICT & CAPABILITIES]
-- Potential Accuracy: Higher than Version 1.
-- New Feature: Introduced the "Unknown" class to act as an out-of-scope bin. This successfully catches user uploads/captures that fall outside the system's target pathogens.
+- Accuracy per class: [fill in from TM export]
+- "Unknown" out-of-scope class retained from v2.0, unchanged in function.
 
-[KNOWN ISSUES / BUGS]
-- Tri-Point Bias: The current model is heavily overfitted to "tri-point" inoculation samples.
-- Single-Point Failure: If a user scans a single-point sample (e.g., A. flavus), the model aggressively flags it as "Unknown" (typically 65%-100% confidence majority). 
-- In preliminary testing of single-point samples, the correct fungi never ranked as the primary prediction.
+[KNOWN ISSUES CARRIED FROM VERSION 2.0 — STATUS UNCONFIRMED]
+- Tri-point/single-point sample bias (see v2.0 log): model was heavily
+  overfitted to tri-point inoculation samples, aggressively misclassifying
+  single-point samples as "Unknown."
+- Whether the v2.1 augmentation fix (synthesized single-point crops from
+  tri-point images) was actually applied to this v3 dataset is NOT
+  CONFIRMED — verify against the actual training pipeline before claiming
+  this is resolved.
 
-[VERSION 2.1 ROADMAP & PATCH NOTES]
-- Objective: Re-train the model to accurately classify both tri-point and single-point samples.
-- Data Augmentation Hack (Disclaimer): There is currently a shortage of unique single-point images, specifically for 
-A. clavatus. To solve this, the dataset will be expanded by cropping/zooming in on a single colony blob from the 
-existing tri-point images. To prevent training bias, this same zooming technique will be applied evenly across all other fungi classes.
+[KNOWN ISSUES FOUND IN VERSION 3 TESTING]
+- Background surface bias: entire training dataset was captured on a white
+  table surface. Uncertain whether the model is keying on colony texture
+  or partly on background color/lighting as a classification cue.
+- Plate-boundary / zoom framing bias: closer zoomed-in captures, where the
+  circular petri dish boundary is no longer visible in frame, get
+  misclassified as "Unknown" even for correctly in-scope species (observed
+  with A. flavus). Suggests the model may be partly relying on the visible
+  plate edge as a framing cue rather than purely on colony texture.
 
-=========================================================
+[VERSION 3.1 ROADMAP]
+- Objective: reduce background/framing bias identified above through
+  targeted data augmentation, without introducing new bias.
+- Background variation: add a small proportion of training images captured
+  on a black table surface, applied evenly across all 6 classes, so the
+  model isn't over-indexed on one background color.
+- Close-zoom texture crops: add a small proportion of tightly cropped,
+  closer-zoom images (plate boundary not visible in frame) per class,
+  applied evenly across all 6 classes, so recognition doesn't depend on
+  the circular plate edge being present in the shot.
+- As with the v2.1 single-point augmentation, apply both changes in equal
+  proportion across every class — an uneven addition would just replace
+  one bias with another rather than removing it.

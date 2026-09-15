@@ -2,11 +2,11 @@
   "name": "PathoScan",
   "version": "1.0.0",
   "private": true,
-  "scripts": {
-    "dev": "vite --host",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
-  },
+"scripts": {
+  "dev": "vite --host",
+  "build": "tsc && vite build",
+  "preview": "vite preview --host"
+},
   "dependencies": {
     "@teachablemachine/image": "^0.8.5",
     "@tensorflow/tfjs": "^4.22.0",

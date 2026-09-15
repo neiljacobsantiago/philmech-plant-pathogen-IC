@@ -3,3 +3,4 @@
 dist/
 *.pem
 mkcert.exe
+dev-dist/

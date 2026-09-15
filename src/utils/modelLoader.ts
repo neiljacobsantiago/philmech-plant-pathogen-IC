@@ -11,5 +11,5 @@ export function getModel(): Promise<any> {
     }
     modelPromise = window.tmImage.load('/model/model.json', '/model/metadata.json');
   }
-  return modelPromise;
+  return modelPromise as Promise<any>;
 }
