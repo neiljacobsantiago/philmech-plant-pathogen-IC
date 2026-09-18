@@ -87,6 +87,21 @@ export const getPathogenById = async (id: string): Promise<PathogenRecord | null
   });
 };
 
+// New: powers ReferenceSheet.tsx, so the reference lookup reads the same
+// seeded IndexedDB records AnalysisResult.tsx cross-checks against,
+// instead of a separately hardcoded copy of the same data.
+export const getAllPathogens = async (): Promise<PathogenRecord[]> => {
+  const db = await initDB();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(STORE_NAME, 'readonly');
+    const store = transaction.objectStore(STORE_NAME);
+    const request = store.getAll();
+
+    request.onsuccess = () => resolve(request.result || []);
+    request.onerror = () => reject(request.error);
+  });
+};
+
 export const saveSession = async (imageFile: Blob, predictions: PathogenScore[]): Promise<void> => {
   const db = await initDB();
   return new Promise((resolve, reject) => {

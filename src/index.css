@@ -16,8 +16,12 @@ html, body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Mobile-first: below md this is the original locked phone frame,
+   unchanged. At md/lg the frame widens instead of staying pinned
+   at 420px, so widescreen users get an actual layout instead of a
+   letterboxed phone card floating in empty space. */
 #root {
-  @apply relative mx-auto flex w-full max-w-[420px] min-h-[100dvh] flex-col bg-[#f4f4f5] dark:bg-zinc-950 sm:shadow-2xl sm:border-x sm:border-slate-300 dark:sm:border-zinc-800 overflow-x-hidden;
+  @apply relative mx-auto flex w-full min-h-[100dvh] flex-col bg-[#f4f4f5] dark:bg-zinc-950 overflow-x-hidden max-w-[420px] md:max-w-3xl lg:max-w-5xl sm:shadow-2xl sm:border-x sm:border-slate-300 dark:sm:border-zinc-800;
 }
 
 ::-webkit-scrollbar {

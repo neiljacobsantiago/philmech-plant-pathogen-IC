@@ -1,46 +1,46 @@
-philmech-plant-pathogen-scanner/
-├── _legacy_reference/         # backup here vanilla files for reference ONLY
-│   ├── dashboard.html
-│   ├── login.html
-│   ├── result.html
-│   └── scan.html
-├── public/                    # Static assets & vendor scripts
+philmech-plant-pathogen-IC/
+├── certs/                     # mkcert local HTTPS certs — gitignored, regenerated per network
+├── docs/                      # Reserved for capstone documentation (currently empty)
+├── public/                    # Static assets, copied verbatim into dist/ on build
 │   ├── js/
 │   │   ├── teachablemachine-image.min.js
 │   │   └── tf.min.js
-│   ├── model/                 # Teachable Machine model files
-│   ├── manifest.json          # (PWA - In scope this sprint)
-│   └── sw.js                  # (PWA - In scope this sprint)
+│   ├── model/                 # Trained Teachable Machine export (v3.0 — terreus swap)
+│   │   ├── metadata.json
+│   │   ├── model.json
+│   │   ├── weights.bin
+│   │   └── note.txt           # Training log
+│   └── appLogo.png            # Source for manifest icons + apple-touch-icon
 ├── src/
-│   ├── assets/                # Explicitly imported images/icons
+│   ├── assets/                # Explicitly imported images/icons (bundled by Vite)
 │   │   ├── fonts/
 │   │   ├── analyzeIcon.svg
-│   │   ├── appLogo.png
+│   │   ├── appLogo.png        # Bundled copy used inside components (e.g. Header)
 │   │   ├── cameraIcon.svg
 │   │   ├── uploadIcon.svg
 │   │   └── userIcon.png
-│   ├── components/            # Reusable UI elements
+│   ├── components/
 │   │   ├── ConfidenceBar.tsx
-│   │   ├── FloatingDock.tsx   # Assigned to: Aleina
-│   │   └── Header.tsx         # Assigned to: Aleina
-│   ├── db/                    # IndexedDB logic (In scope this sprint)
-│   │   ├── database.ts
+│   │   ├── FloatingDock.tsx   # Owner: Aleina
+│   │   └── Header.tsx         # Owner: Aleina
+│   ├── db/                    # IndexedDB logic
+│   │   ├── database.ts        # DB_VERSION 3 — reseeds pathogens store on upgrade
 │   │   └── schema.ts
 │   ├── hooks/
 │   │   └── useScanData.ts
-│   ├── js/                    # Core scanner logic (Ignored for this sprint)
-│   │   ├── data.js
-│   │   └── script.js
-│   ├── pages/                 # Main application screens
-│   │   ├── AnalysisResult.tsx # Assigned to: Riza
-│   │   ├── Dashboard.tsx      # Assigned to: Victoria
-│   │   └── ScanPreview.tsx    # Assigned to: Victoria
+│   ├── pages/
+│   │   ├── AnalysisResult.tsx # Owner: Riza
+│   │   ├── Dashboard.tsx      # Owner: Victoria — ScanPreview.tsx not present; status TBD
+│   │   └── vite-env.d.ts      # Misplaced — normally lives at src/ root, not src/pages/
+│   ├── utils/
+│   │   └── modelLoader.ts     # Singleton cache for the loaded TM model
 │   ├── App.tsx                # Main router/traffic controller
 │   ├── index.css              # Global Tailwind imports
-│   └── main.tsx               # React DOM entry point
+│   └── main.tsx                # React DOM entry point
 ├── important-note.txt         # Sprint instructions and Git workflow
 ├── index.html                 # Main Vite HTML shell
 ├── package.json
 ├── README.md
-├── tailwind.config.js         # Tailwind configuration
-└── vite.config.ts             # Vite configuration
+├── tailwind.config.js
+├── tsconfig.json
+└── vite.config.ts             # PWA manifest/workbox config, mkcert HTTPS server setup
