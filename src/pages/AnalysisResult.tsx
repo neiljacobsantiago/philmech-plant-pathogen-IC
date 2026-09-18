@@ -4,6 +4,7 @@ import { useScanData } from '../hooks/useScanData';
 import { getPathogenById } from '../db/database';
 import { PathogenRecord } from '../db/schema';
 import { FloatingDock } from '../components/FloatingDock';
+import { ReferenceSheet } from '../components/ReferenceSheet';
 
 const getMatrixColor = (score: number) => {
   if (score >= 90) return { bg: 'bg-[#006837]', text: 'text-[#006837] dark:text-emerald-500' };
@@ -18,6 +19,7 @@ export default function AnalysisResult() {
   const location = useLocation();
   const { predictions, imageUrl, isAnalyzing, error } = useScanData();
   const [characteristics, setCharacteristics] = useState<PathogenRecord | null>(null);
+  const [referenceOpen, setReferenceOpen] = useState(false);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
 
@@ -159,10 +161,9 @@ export default function AnalysisResult() {
       <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleRescan} />
       <input ref={galleryInputRef} type="file" accept="image/*" className="hidden" onChange={handleRescan} />
 
-      <FloatingDock
-        onCameraClick={() => cameraInputRef.current?.click()}
-        onUploadClick={() => galleryInputRef.current?.click()}
-      />
+      {referenceOpen && <ReferenceSheet onClose={() => setReferenceOpen(false)} />}
+
+      <FloatingDock onReferenceClick={() => setReferenceOpen(true)} />
     </div>
   );
 }
