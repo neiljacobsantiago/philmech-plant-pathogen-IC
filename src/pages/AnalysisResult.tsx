@@ -5,6 +5,14 @@ import { getPathogenById } from '../db/database';
 import { PathogenRecord } from '../db/schema';
 import { FloatingDock } from '../components/FloatingDock';
 import { ReferenceSheet } from '../components/ReferenceSheet';
+import { CameraCapture } from '../components/CameraCapture';
+
+// Same device check as Dashboard.tsx - phones get the native camera app,
+// desktops get the in-browser live camera. Kept local to this file since
+// there's no shared utils module for it yet.
+const isMobileDevice = () =>
+  /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
 const getMatrixColor = (score: number) => {
   if (score >= 90) return { bg: 'bg-[#006837]', text: 'text-[#006837] dark:text-emerald-500' };
@@ -14,12 +22,44 @@ const getMatrixColor = (score: number) => {
   return { bg: 'bg-rose-500', text: 'text-rose-500' };
 };
 
+// Plain-language clearance messaging - no "PCR" (too narrow; the SRS allows
+// PCR OR DNA sequencing), and names the real, common causes of a low-confidence
+// or no-match result so the message is actually useful, not just a compliance line.
+const getClearanceStatus = (name: string, score: number) => {
+  if (name === 'Unknown') {
+    return {
+      label: 'Out of Scope / No Confident Match',
+      message: "No confident match among the 5 target pathogens. This can happen from poor lighting, an unclear photo, or another growth in the sample. It may simply be outside what this tool can identify.",
+      dot: 'bg-slate-400',
+      text: 'text-slate-600 dark:text-zinc-300',
+      tint: 'bg-slate-100 dark:bg-zinc-800/60',
+    };
+  }
+  if (score >= 90) {
+    return {
+      label: 'Clearance Threshold Met',
+      message: 'Meets the confidence needed for automatic clearance. This result may be used for preliminary screening.',
+      dot: 'bg-[#006837]',
+      text: 'text-[#006837] dark:text-emerald-500',
+      tint: 'bg-[#006837]/10 dark:bg-emerald-500/10',
+    };
+  }
+  return {
+    label: 'Further Testing Required',
+    message: "Below the confidence needed for automatic clearance. This can happen due to lighting, image quality, or another growth in the sample. Confirm this result with further lab testing before relying on it.",
+    dot: 'bg-rose-500',
+    text: 'text-rose-600 dark:text-rose-400',
+    tint: 'bg-rose-50 dark:bg-rose-500/10',
+  };
+};
+
 export default function AnalysisResult() {
   const navigate = useNavigate();
   const location = useLocation();
   const { predictions, imageUrl, isAnalyzing, error } = useScanData();
   const [characteristics, setCharacteristics] = useState<PathogenRecord | null>(null);
   const [referenceOpen, setReferenceOpen] = useState(false);
+  const [cameraOpen, setCameraOpen] = useState(false);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
 
@@ -27,6 +67,19 @@ export default function AnalysisResult() {
     const file = e.target.files?.[0];
     if (file) navigate('/result', { state: { imageFile: file }, replace: true });
     e.target.value = '';
+  };
+
+  const handleCameraCapture = (file: File) => {
+    setCameraOpen(false);
+    navigate('/result', { state: { imageFile: file }, replace: true });
+  };
+
+  const handleRetryScan = () => {
+    if (isMobileDevice()) {
+      cameraInputRef.current?.click();
+    } else {
+      setCameraOpen(true);
+    }
   };
 
   const topMatch = predictions[0] || { name: 'Unknown', score: 0 };
@@ -53,6 +106,7 @@ export default function AnalysisResult() {
   }
 
   const displayChars = characteristics || { growthRate: "N/A", surfaceColor: "N/A", reverseColor: "N/A", myceliumTexture: "N/A" };
+  const clearance = getClearanceStatus(topMatch.name, topMatch.score);
 
   return (
     <div className="relative flex min-h-[100dvh] w-full flex-col text-slate-900 dark:text-zinc-100 bg-[#f4f4f5] dark:bg-zinc-950">
@@ -88,6 +142,37 @@ export default function AnalysisResult() {
               <span className="text-2xl font-black">{topMatch.score}%</span>
               <span className="mt-1 text-[7px] font-bold uppercase tracking-widest opacity-90">Confidence</span>
             </div>
+          </div>
+
+          {/* Clearance status - plain-language explanation of what the
+              score actually means. Wording varies, but this banner itself
+              is purely informational now. */}
+          <div className={`w-full flex items-start gap-3 rounded-lg p-4 border border-transparent ${clearance.tint}`}>
+            <span className={`mt-1 h-2.5 w-2.5 shrink-0 rounded-full ${clearance.dot}`} />
+            <div className="flex flex-col">
+              <span className={`text-[11px] font-black uppercase tracking-widest ${clearance.text}`}>{clearance.label}</span>
+              <p className="mt-0.5 text-[12px] font-medium leading-snug text-slate-600 dark:text-zinc-300">{clearance.message}</p>
+            </div>
+          </div>
+
+          {/* Always available, regardless of outcome - a lab tech scanning
+              a run of samples shouldn't have to hit back to Dashboard
+              between every single one. */}
+          <div className="w-full flex items-center gap-4">
+            <button
+              type="button"
+              onClick={handleRetryScan}
+              className="flex-1 rounded-lg bg-[#006837] py-3 text-center text-[13px] font-bold text-white shadow-sm transition active:scale-95"
+            >
+              Scan Another Sample
+            </button>
+            <button
+              type="button"
+              onClick={() => galleryInputRef.current?.click()}
+              className="shrink-0 text-[12px] font-bold text-[#006837] underline underline-offset-2 dark:text-emerald-500"
+            >
+              or choose a photo
+            </button>
           </div>
 
           <div className="w-full rounded-lg bg-white p-5 shadow-sm border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900">
@@ -157,6 +242,10 @@ export default function AnalysisResult() {
           </div>
         </main>
       </div>
+
+      {cameraOpen && (
+        <CameraCapture onCapture={handleCameraCapture} onClose={() => setCameraOpen(false)} />
+      )}
 
       <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleRescan} />
       <input ref={galleryInputRef} type="file" accept="image/*" className="hidden" onChange={handleRescan} />

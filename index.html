@@ -7,7 +7,18 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="PathoScan" />
-    <link rel="apple-touch-icon" href="/appLogo.png" />
+
+    <!-- iOS specifically renders transparent PNG pixels as black when used
+         as a home-screen icon, so this must be a separate, fully opaque
+         file - not the same appLogo.png used elsewhere (which stays
+         transparent on purpose for the in-app header). -->
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="/apple-touch-icon-167x167.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png" />
+
+    <!-- Regular browser tab favicon - transparency renders fine here,
+         no change needed. -->
     <link rel="icon" type="image/png" href="/appLogo.png" />
     <title>PathoScan</title>
   </head>

@@ -16,34 +16,40 @@ const isMobileDevice = () =>
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [previewImg, setPreviewImg] = useState<string | null>(null);
-  const [previewFile, setPreviewFile] = useState<File | null>(null);
   const [cameraOpen, setCameraOpen] = useState(false);
   const [referenceOpen, setReferenceOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
-  const setImageFile = (file: File) => {
-    setPreviewFile(file);
-    setPreviewImg(URL.createObjectURL(file));
+  // Goes straight to the result - no separate "confirm this photo, then
+  // tap Analyze" step. Matches the Results page's own "Scan Another
+  // Sample" behavior, and keeps clicks to a minimum (a fresh analysis is
+  // one tap away either way, so a confirm step just adds a step back
+  // rather than actually protecting anyone from a bad photo).
+  const goToAnalysis = (file: File) => {
+    navigate('/result', { state: { imageFile: file } });
   };
 
   const handleImageSelect = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) setImageFile(file);
+    if (file) goToAnalysis(file);
     e.target.value = '';
   };
 
   const handleCameraCapture = (file: File) => {
-    setImageFile(file);
     setCameraOpen(false);
+    goToAnalysis(file);
   };
 
   const handleCameraClick = () => {
     if (isMobileDevice()) {
+      // Hands off to the phone's own camera app - native controls,
+      // no custom overlay needed.
       cameraInputRef.current?.click();
     } else {
+      // No native camera app to defer to on desktop - use the
+      // in-browser live camera instead.
       setCameraOpen(true);
     }
   };
@@ -57,7 +63,7 @@ export default function Dashboard() {
     e.preventDefault();
     setIsDragging(false);
     const file = e.dataTransfer.files?.[0];
-    if (file && file.type.startsWith('image/')) setImageFile(file);
+    if (file && file.type.startsWith('image/')) goToAnalysis(file);
   };
 
   const currentDate = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
@@ -84,58 +90,47 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* px-5 keeps the 20px edge padding at every width; the inner
+            max-w grows the usable content at md/lg instead of leaving a
+            phone-sized card stranded in the middle of a wide screen. */}
         <main className="w-full flex-1 flex flex-col items-center px-5 py-8 md:mx-auto md:max-w-3xl lg:max-w-5xl">
 
-          {/* items-center (not stretch) when empty - the scan control is
-              now compact, not a tall box, so it shouldn't be forced to
-              match the guidelines card's height. Once a real photo exists,
-              the preview frame is tall again and stretch matches it. */}
-          <div className={`w-full flex flex-col gap-6 md:flex-row ${previewImg ? 'md:items-stretch' : 'md:items-center'}`}>
+          <div className="w-full flex flex-col gap-6 md:flex-row md:items-center">
 
-            {previewImg ? (
-              <div className="relative flex w-full aspect-[3/4] max-h-[550px] flex-col items-center justify-center overflow-hidden rounded-lg bg-white p-2 shadow-lg border border-slate-200 dark:border-zinc-800 dark:bg-zinc-900 md:max-w-sm">
-                <img src={previewImg} alt="Preview" className="h-full w-full object-contain bg-slate-100 dark:bg-black/50 rounded-lg" />
-                <button
-                  onClick={() => { setPreviewImg(null); setPreviewFile(null); }}
-                  className="absolute right-4 top-4 z-20 flex h-9 w-9 items-center justify-center rounded-lg bg-black/60 text-white backdrop-blur-md transition active:scale-95 shadow-md"
-                >
-                  ✕
-                </button>
+            {/* No frame, no border, no card - just the control itself.
+                Click anywhere in this area to scan; drop a file (desktop)
+                to analyze it immediately. */}
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={handleCameraClick}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleCameraClick(); }}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              aria-label="Tap to scan, or drop a photo here"
+              className={`flex w-full cursor-pointer flex-col items-center justify-center gap-4 rounded-lg py-10 transition-colors md:max-w-sm ${
+                isDragging ? 'bg-[#006837]/5 ring-2 ring-[#006837]' : ''
+              }`}
+            >
+              <div className="flex h-28 w-28 items-center justify-center rounded-full bg-[#006837] text-white shadow-xl transition active:scale-95">
+                <svg className="h-11 w-11" fill="none" stroke="currentColor" strokeWidth="1.75" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
               </div>
-            ) : (
-              // No frame, no border, no card - just the control itself.
-              // Click anywhere in this area to scan; drop a file (desktop)
-              // to load it directly.
-              <div
-                role="button"
-                tabIndex={0}
-                onClick={handleCameraClick}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleCameraClick(); }}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                aria-label="Tap to scan, or drop a photo here"
-                className={`flex w-full cursor-pointer flex-col items-center justify-center gap-4 rounded-lg py-10 transition-colors md:max-w-sm ${
-                  isDragging ? 'bg-[#006837]/5 ring-2 ring-[#006837]' : ''
-                }`}
+              <p className="text-center text-[15px] font-bold text-slate-600 dark:text-zinc-300">
+                {isDragging ? 'Drop to analyze' : 'Tap to Scan'}
+              </p>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
+                className="text-[12px] font-bold text-[#006837] underline underline-offset-2 dark:text-emerald-500"
               >
-                <div className="flex h-28 w-28 items-center justify-center rounded-full bg-[#006837] text-white shadow-xl transition active:scale-95">
-                  <svg className="h-11 w-11" fill="none" stroke="currentColor" strokeWidth="1.75" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                </div>
-                <p className="text-center text-[15px] font-bold text-slate-600 dark:text-zinc-300">
-                  {isDragging ? 'Drop to load photo' : 'Tap to Scan'}
-                </p>
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
-                  className="text-[12px] font-bold text-[#006837] underline underline-offset-2 dark:text-emerald-500"
-                >
-                  or browse files
-                </button>
-              </div>
-            )}
+                or browse files
+              </button>
+            </div>
 
-            <div className="flex flex-1 flex-col gap-3 rounded-lg border border-slate-200 bg-white p-6 shadow-sm md:justify-center dark:border-zinc-800 dark:bg-zinc-900">
+            {/* Stacks below the scan control on phones, sits beside it at
+                md and up. */}
+            <div className="flex flex-1 flex-col gap-3 rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
               <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Capture Guidelines</h2>
               <ul className="flex flex-col gap-3 text-[13px] font-medium leading-relaxed text-slate-600 dark:text-zinc-300">
                 <li>Use consistent overhead lighting; avoid glare on the plate.</li>
@@ -155,14 +150,11 @@ export default function Dashboard() {
 
       {referenceOpen && <ReferenceSheet onClose={() => setReferenceOpen(false)} />}
 
+      {/* Mobile path: hands off to the phone's native camera app. */}
       <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleImageSelect} />
       <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageSelect} />
 
-      <FloatingDock
-        onReferenceClick={() => setReferenceOpen(true)}
-        onAnalyzeClick={() => navigate('/result', { state: { imageFile: previewFile } })}
-        isReady={!!previewImg}
-      />
+      <FloatingDock onReferenceClick={() => setReferenceOpen(true)} />
     </div>
   );
 }

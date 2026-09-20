@@ -2,11 +2,16 @@ import React, { useEffect, useState } from 'react';
 
 interface FloatingDockProps {
   onReferenceClick: () => void;
-  onAnalyzeClick?: () => void;
-  isReady?: boolean;
 }
 
-export const FloatingDock: React.FC<FloatingDockProps> = ({ onReferenceClick, onAnalyzeClick, isReady }) => {
+// Analyze was removed from here entirely. It only ever fired on the very
+// first scan of a session - Dashboard's tap-to-scan card and the Results
+// page's "Scan Another Sample" button each already trigger analysis
+// directly and instantly, so a separate confirm-then-Analyze step in the
+// dock had nothing left to do and would sit disabled forever after the
+// first scan. The dock is now purely secondary/utility actions, consistent
+// on every page: settings and the pathogen reference lookup.
+export const FloatingDock: React.FC<FloatingDockProps> = ({ onReferenceClick }) => {
   const [isDark, setIsDark] = useState(() => localStorage.getItem('pathoscan-dark') === 'true');
   const [reduceMotion, setReduceMotion] = useState(() => localStorage.getItem('pathoscan-reduce-motion') === 'true');
   const [largeText, setLargeText] = useState(() => localStorage.getItem('pathoscan-large-text') === 'true');
@@ -30,52 +35,33 @@ export const FloatingDock: React.FC<FloatingDockProps> = ({ onReferenceClick, on
   return (
     <>
       <div
-        className="fixed inset-x-0 z-50 mx-auto flex w-[260px] items-end justify-between rounded-full border border-white/60 bg-white/80 px-4 pb-3 pt-2.5 shadow-[0_12px_40px_rgba(0,0,0,0.16)] backdrop-blur-xl dark:border-white/10 dark:bg-zinc-900/80"
+        className="fixed inset-x-0 z-50 mx-auto flex w-[180px] items-center justify-between rounded-full border border-white/60 bg-white/80 px-2 py-2 shadow-[0_10px_30px_rgba(0,0,0,0.15)] backdrop-blur-xl dark:border-white/10 dark:bg-zinc-900/80"
         style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 1.25rem)' }}
       >
         <button
           type="button"
           onClick={() => setSettingsOpen(true)}
           aria-label="Settings and accessibility"
-          className="flex min-w-0 flex-col items-center gap-1 text-slate-500 transition active:scale-95 dark:text-zinc-400"
+          className="flex flex-1 flex-col items-center gap-1 py-1 text-slate-500 transition active:scale-95 dark:text-zinc-400"
         >
-          <span className="flex h-10 w-10 items-center justify-center rounded-full">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full">
             <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <circle cx="12" cy="12" r="3" />
               <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
             </svg>
           </span>
-          <span className="truncate text-[9px] font-bold uppercase tracking-wide">More</span>
+          <span className="truncate text-[9px] font-bold uppercase tracking-wide">Settings</span>
         </button>
 
-        {/* Protrudes above the pill's top edge, like Dynamic Island's
-            centerpiece - the visual anchor of the whole dock. */}
-        <button
-          type="button"
-          onClick={isReady ? onAnalyzeClick : undefined}
-          disabled={!isReady}
-          aria-label="Analyze specimen"
-          className="-mt-4 flex min-w-0 flex-col items-center gap-1 transition active:scale-95 disabled:cursor-not-allowed disabled:active:scale-100"
-        >
-          <div
-            className={`flex h-16 w-16 items-center justify-center rounded-full transition-all duration-300 ${
-              isReady
-                ? 'bg-[#006837] text-white shadow-[0_8px_24px_rgba(0,104,55,0.45)] ring-4 ring-white dark:ring-zinc-900'
-                : 'bg-slate-200 text-slate-400 shadow-inner ring-4 ring-white dark:bg-zinc-700 dark:text-zinc-500 dark:ring-zinc-900'
-            }`}
-          >
-            <svg className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2.25" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
-          </div>
-          <span className={`text-[9px] font-bold uppercase tracking-wide ${isReady ? 'text-[#006837] dark:text-emerald-500' : 'text-slate-400 dark:text-zinc-500'}`}>Analyze</span>
-        </button>
+        <div className="h-8 w-px shrink-0 bg-slate-200 dark:bg-zinc-700" />
 
         <button
           type="button"
           onClick={onReferenceClick}
           aria-label="Pathogen reference guide"
-          className="flex min-w-0 flex-col items-center gap-1 text-slate-500 transition active:scale-95 dark:text-zinc-400"
+          className="flex flex-1 flex-col items-center gap-1 py-1 text-slate-500 transition active:scale-95 dark:text-zinc-400"
         >
-          <span className="flex h-10 w-10 items-center justify-center rounded-full">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full">
             <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
           </span>
           <span className="truncate text-[9px] font-bold uppercase tracking-wide">Reference</span>
