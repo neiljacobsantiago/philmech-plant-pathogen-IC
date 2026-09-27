@@ -1,10 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { getAllPathogens } from '../db/database';
-import { PathogenRecord } from '../db/schema';
+import React, { useEffect, useState } from "react";
+import { getAllPathogens } from "../db/database";
+import { PathogenRecord } from "../db/schema";
 
 interface ReferenceSheetProps {
   onClose: () => void;
 }
+
+/** Cultural-characteristic rows shown per species, in display order. */
+const CHARACTERISTIC_FIELDS: {
+  label: string;
+  key: keyof Omit<PathogenRecord, "id">;
+}[] = [
+  { label: "Growth Rate", key: "growthRate" },
+  { label: "Surface Color", key: "surfaceColor" },
+  { label: "Reverse Color", key: "reverseColor" },
+  { label: "Texture", key: "myceliumTexture" },
+];
 
 export const ReferenceSheet: React.FC<ReferenceSheetProps> = ({ onClose }) => {
   const [pathogens, setPathogens] = useState<PathogenRecord[]>([]);
@@ -19,53 +30,64 @@ export const ReferenceSheet: React.FC<ReferenceSheetProps> = ({ onClose }) => {
         // so this doesn't silently depend on that implementation detail.
         setPathogens([...records].sort((a, b) => a.id.localeCompare(b.id)));
       })
-      .catch(() => setError('Could not load reference data from local storage.'))
+      .catch((err) => {
+        console.error(err);
+        setError("Could not load reference data from local storage.");
+      })
       .finally(() => setIsLoading(false));
   }, []);
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-end bg-black/40" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-[60] flex items-end bg-black/40"
+      onClick={onClose}
+    >
       <div
         className="max-h-[85dvh] w-full overflow-y-auto rounded-t-lg bg-white p-6 dark:bg-zinc-900 md:mx-auto md:max-w-2xl md:rounded-lg"
-        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 1.5rem)' }}
+        style={{
+          paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1.5rem)",
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-slate-300 dark:bg-zinc-700 md:hidden" />
-        <h2 className="mb-1 text-sm font-black uppercase tracking-widest text-slate-400">Pathogen Reference</h2>
+        <h2 className="mb-1 text-sm font-black uppercase tracking-widest text-slate-400">
+          Pathogen Reference
+        </h2>
         <p className="mb-4 text-[12px] font-medium text-slate-500 dark:text-zinc-400">
-          Known 5-7 day, early-to-mature PDA culture characteristics, for manual cross-verification alongside the AI result.
+          Known 5-7 day, early-to-mature PDA culture characteristics, for manual
+          cross-verification alongside the AI result.
         </p>
 
         {isLoading && (
-          <p className="py-6 text-center text-[12px] font-bold text-slate-400">Loading reference data...</p>
+          <p className="py-6 text-center text-[12px] font-bold text-slate-400">
+            Loading reference data...
+          </p>
         )}
 
         {error && (
-          <p className="py-6 text-center text-[12px] font-bold text-rose-500">{error}</p>
+          <p className="py-6 text-center text-[12px] font-bold text-rose-500">
+            {error}
+          </p>
         )}
 
         {!isLoading && !error && (
           <div className="flex flex-col divide-y divide-slate-100 dark:divide-zinc-800">
-            {pathogens.map((p) => (
-              <div key={p.id} className="py-4 first:pt-0 last:pb-0">
-                <h3 className="mb-2 text-[13px] font-black italic text-[#006837] dark:text-emerald-500">{p.id}</h3>
+            {pathogens.map((pathogen) => (
+              <div key={pathogen.id} className="py-4 first:pt-0 last:pb-0">
+                <h3 className="mb-2 text-[13px] font-black italic text-[#006837] dark:text-emerald-500">
+                  {pathogen.id}
+                </h3>
                 <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-[12px]">
-                  <div>
-                    <span className="block text-[9px] font-bold uppercase tracking-wide text-slate-400">Growth Rate</span>
-                    <span className="font-semibold text-slate-700 dark:text-zinc-200">{p.growthRate}</span>
-                  </div>
-                  <div>
-                    <span className="block text-[9px] font-bold uppercase tracking-wide text-slate-400">Surface Color</span>
-                    <span className="font-semibold text-slate-700 dark:text-zinc-200">{p.surfaceColor}</span>
-                  </div>
-                  <div>
-                    <span className="block text-[9px] font-bold uppercase tracking-wide text-slate-400">Reverse Color</span>
-                    <span className="font-semibold text-slate-700 dark:text-zinc-200">{p.reverseColor}</span>
-                  </div>
-                  <div>
-                    <span className="block text-[9px] font-bold uppercase tracking-wide text-slate-400">Texture</span>
-                    <span className="font-semibold text-slate-700 dark:text-zinc-200">{p.myceliumTexture}</span>
-                  </div>
+                  {CHARACTERISTIC_FIELDS.map(({ label, key }) => (
+                    <div key={key}>
+                      <span className="block text-[9px] font-bold uppercase tracking-wide text-slate-400">
+                        {label}
+                      </span>
+                      <span className="font-semibold text-slate-700 dark:text-zinc-200">
+                        {pathogen[key]}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}

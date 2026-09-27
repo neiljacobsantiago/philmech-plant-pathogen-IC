@@ -1,6 +1,6 @@
-import React from 'react';
-import appLogo from '../assets/appLogo.png';
-import userIcon from '../assets/userIcon.png';
+import React from "react";
+import appLogo from "../assets/appLogo.png";
+import userIcon from "../assets/userIcon.png";
 
 interface HeaderProps {
   title?: string;
@@ -10,8 +10,8 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  title = 'WELCOME!',
-  subtitle = 'PathoScan: Your Pathogen Analysis Companion',
+  title = "WELCOME!",
+  subtitle = "PathoScan: Your Pathogen Analysis Companion",
   showBack = false,
   onBack,
 }) => {
@@ -23,21 +23,41 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={onBack}
           className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-slate-700 shadow-sm backdrop-blur-md transition active:scale-95"
         >
-          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          <svg
+            className="h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15 19l-7-7 7-7"
+            />
           </svg>
         </button>
       ) : (
-        <img src={appLogo} alt="PICS Logo" className="h-10 w-10 object-contain" />
+        <img
+          src={appLogo}
+          alt="PICS Logo"
+          className="h-10 w-10 object-contain"
+        />
       )}
 
       <div className="text-right">
-        <h2 className="text-xs font-black tracking-wider text-slate-900 uppercase">{title}</h2>
+        <h2 className="text-xs font-black tracking-wider text-slate-900 uppercase">
+          {title}
+        </h2>
         <p className="text-[10px] text-slate-500 font-medium">{subtitle}</p>
       </div>
 
       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200/80 overflow-hidden shadow-sm">
-        <img src={userIcon} alt="Avatar" className="h-full w-full object-cover" />
+        <img
+          src={userIcon}
+          alt="Avatar"
+          className="h-full w-full object-cover"
+        />
       </div>
     </header>
   );

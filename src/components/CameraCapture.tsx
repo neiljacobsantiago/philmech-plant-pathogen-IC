@@ -1,15 +1,21 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 interface CameraCaptureProps {
   onCapture: (file: File) => void;
   onClose: () => void;
 }
 
-export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose }) => {
+const CAMERA_ACCESS_ERROR =
+  "Unable to access a camera. Check permissions or use Upload instead.";
+
+export const CameraCapture: React.FC<CameraCaptureProps> = ({
+  onCapture,
+  onClose,
+}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [facing, setFacing] = useState<'environment' | 'user'>('environment');
+  const [facing, setFacing] = useState<"environment" | "user">("environment");
   const [ready, setReady] = useState(false);
 
   const stopStream = useCallback(() => {
@@ -17,49 +23,60 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
     streamRef.current = null;
   }, []);
 
-  const startStream = useCallback(async (mode: 'environment' | 'user') => {
-    setError(null);
-    setReady(false);
-    stopStream();
-    try {
-      // Phones: this actually gets the rear camera.
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: mode } },
-        audio: false,
-      });
+  // Wires a newly acquired MediaStream up to the <video> element and marks
+  // the preview as ready. Shared by the primary attempt and the desktop
+  // fallback below so both paths end up in the exact same state.
+  const attachStream = useCallback(
+    async (stream: MediaStream, resolvedFacing: "environment" | "user") => {
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
       }
-      setFacing(mode);
+      setFacing(resolvedFacing);
       setReady(true);
-    } catch (err) {
-      // Desktops/laptops have no rear camera to satisfy "environment" -
-      // fall back to whatever camera the OS reports (built-in webcam,
-      // or an external USB inspection camera if one is plugged in).
-      if (mode === 'environment') {
-        try {
-          const fallback = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-          streamRef.current = fallback;
-          if (videoRef.current) {
-            videoRef.current.srcObject = fallback;
-            await videoRef.current.play();
-          }
-          setFacing('user');
-          setReady(true);
-          return;
-        } catch {
-          setError('Unable to access a camera. Check permissions or use Upload instead.');
+    },
+    [],
+  );
+
+  const startStream = useCallback(
+    async (mode: "environment" | "user") => {
+      setError(null);
+      setReady(false);
+      stopStream();
+
+      try {
+        // Phones: this actually gets the rear camera.
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: mode } },
+          audio: false,
+        });
+        await attachStream(stream, mode);
+      } catch {
+        if (mode !== "environment") {
+          setError(CAMERA_ACCESS_ERROR);
           return;
         }
+
+        // Desktops/laptops have no rear camera to satisfy "environment" -
+        // fall back to whatever camera the OS reports (built-in webcam, or
+        // an external USB inspection camera if one is plugged in).
+        try {
+          const fallbackStream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false,
+          });
+          await attachStream(fallbackStream, "user");
+        } catch {
+          setError(CAMERA_ACCESS_ERROR);
+        }
       }
-      setError('Unable to access a camera. Check permissions or use Upload instead.');
-    }
-  }, [stopStream]);
+    },
+    [attachStream, stopStream],
+  );
 
   useEffect(() => {
-    startStream('environment');
+    startStream("environment");
     return () => stopStream();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -67,22 +84,24 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
   const handleCapture = () => {
     const video = videoRef.current;
     if (!video) return;
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement("canvas");
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const context = canvas.getContext("2d");
+    if (!context) return;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
     canvas.toBlob(
       (blob) => {
         if (blob) {
-          const file = new File([blob], `scan-${Date.now()}.jpg`, { type: 'image/jpeg' });
+          const file = new File([blob], `scan-${Date.now()}.jpg`, {
+            type: "image/jpeg",
+          });
           onCapture(file);
           stopStream();
         }
       },
-      'image/jpeg',
-      0.92
+      "image/jpeg",
+      0.92,
     );
   };
 
@@ -92,8 +111,8 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
   };
 
   const switchCamera = () => {
-    const next = facing === 'environment' ? 'user' : 'environment';
-    startStream(next);
+    const nextFacing = facing === "environment" ? "user" : "environment";
+    startStream(nextFacing);
   };
 
   return (
@@ -101,13 +120,21 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
       {error ? (
         <div className="flex w-full max-w-sm flex-col items-center gap-4 rounded-lg bg-white p-6 text-center dark:bg-zinc-900">
           <p className="text-sm font-bold text-rose-500">{error}</p>
-          <button onClick={handleClose} className="w-full rounded-lg bg-[#006837] py-3 text-sm font-bold text-white">
+          <button
+            onClick={handleClose}
+            className="w-full rounded-lg bg-[#006837] py-3 text-sm font-bold text-white"
+          >
             Close
           </button>
         </div>
       ) : (
         <>
-          <video ref={videoRef} playsInline muted className="h-full w-full object-cover" />
+          <video
+            ref={videoRef}
+            playsInline
+            muted
+            className="h-full w-full object-cover"
+          />
 
           {/* Framing guide - reuses the corner-bracket motif from the
               Dashboard's empty scan state for visual consistency. */}
@@ -120,14 +147,16 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
 
           <p
             className="absolute left-0 right-0 text-center text-[11px] font-bold uppercase tracking-widest text-white/80"
-            style={{ top: 'calc(env(safe-area-inset-top, 0px) + 1.5rem)' }}
+            style={{ top: "calc(env(safe-area-inset-top, 0px) + 1.5rem)" }}
           >
-            {facing === 'environment' ? 'Rear Camera' : 'Front / Webcam'}
+            {facing === "environment" ? "Rear Camera" : "Front / Webcam"}
           </p>
 
           <div
             className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-8 pt-6"
-            style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 2.5rem)' }}
+            style={{
+              paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 2.5rem)",
+            }}
           >
             <button
               onClick={handleClose}
@@ -151,7 +180,13 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
               aria-label="Switch camera"
               className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-md"
             >
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"

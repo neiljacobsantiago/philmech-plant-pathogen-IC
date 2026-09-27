@@ -9,5 +9,4 @@ export interface PathogenRecord {
 export interface PathogenScore {
   name: string;
   score: number;
-  isTop?: boolean;
 }

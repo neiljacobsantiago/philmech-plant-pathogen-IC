@@ -1,13 +1,16 @@
 @import "tailwindcss";
 @variant dark (&:where(.dark, .dark *));
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   transition-property: background-color, border-color, color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 300ms;
 }
 
-html, body {
+html,
+body {
   @apply bg-slate-200 dark:bg-black;
   margin: 0;
   padding: 0;
@@ -29,7 +32,9 @@ html, body {
   background: transparent;
 }
 
-.motion-reduce *, .motion-reduce *::before, .motion-reduce *::after {
+.motion-reduce *,
+.motion-reduce *::before,
+.motion-reduce *::after {
   animation-duration: 0.001ms !important;
   animation-iteration-count: 1 !important;
   transition-duration: 0.001ms !important;
