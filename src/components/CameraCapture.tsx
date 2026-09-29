@@ -1,12 +1,33 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { isMobileDevice } from "../utils/device";
 
 interface CameraCaptureProps {
   onCapture: (file: File) => void;
   onClose: () => void;
 }
 
-const CAMERA_ACCESS_ERROR =
-  "Unable to access a camera. Check permissions or use Upload instead.";
+/**
+ * Maps a getUserMedia() failure to a user-facing message. Browsers report
+ * camera failures via DOMException.name rather than a stable error code, so
+ * this switches on that name to surface a specific, actionable message
+ * instead of a generic "something went wrong."
+ */
+function describeError(err: unknown): string {
+  const name = (err as { name?: string })?.name ?? "";
+  switch (name) {
+    case "NotAllowedError":
+    case "SecurityError":
+      return "Camera access was blocked. Allow camera permission for this site in your browser settings, then try again.";
+    case "NotFoundError":
+    case "OverconstrainedError":
+      return "No camera was found on this device. Use Upload instead.";
+    case "NotReadableError":
+    case "AbortError":
+      return "The camera is already in use by another app or tab. Close it and try again.";
+    default:
+      return "Unable to start the camera. Try again, or use Upload instead.";
+  }
+}
 
 export const CameraCapture: React.FC<CameraCaptureProps> = ({
   onCapture,
@@ -14,6 +35,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const requestIdRef = useRef(0);
   const [error, setError] = useState<string | null>(null);
   const [facing, setFacing] = useState<"environment" | "user">("environment");
   const [ready, setReady] = useState(false);
@@ -23,67 +45,83 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
     streamRef.current = null;
   }, []);
 
-  // Wires a newly acquired MediaStream up to the <video> element and marks
-  // the preview as ready. Shared by the primary attempt and the desktop
-  // fallback below so both paths end up in the exact same state.
-  const attachStream = useCallback(
-    async (stream: MediaStream, resolvedFacing: "environment" | "user") => {
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play();
-      }
-      setFacing(resolvedFacing);
-      setReady(true);
-    },
-    [],
-  );
-
   const startStream = useCallback(
     async (mode: "environment" | "user") => {
+      // Any in-flight start from a previous call is now stale; its results
+      // must not overwrite this one's state.
+      const requestId = ++requestIdRef.current;
       setError(null);
       setReady(false);
       stopStream();
 
-      try {
-        // Phones: this actually gets the rear camera.
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: mode } },
-          audio: false,
-        });
-        await attachStream(stream, mode);
-      } catch {
-        if (mode !== "environment") {
-          setError(CAMERA_ACCESS_ERROR);
-          return;
-        }
+      // Desktops have no rear camera, so asking for facingMode "environment"
+      // there fails, then we immediately ask again - and that second request
+      // can come back NotReadableError because the device is still being
+      // released from the first. Skip straight to the default camera on
+      // desktop instead of attempting a facing-mode match at all.
+      const attempts: MediaStreamConstraints[] = isMobileDevice()
+        ? [
+            { video: { facingMode: { ideal: mode } }, audio: false },
+            { video: true, audio: false },
+          ]
+        : [{ video: true, audio: false }];
 
-        // Desktops/laptops have no rear camera to satisfy "environment" -
-        // fall back to whatever camera the OS reports (built-in webcam, or
-        // an external USB inspection camera if one is plugged in).
+      let stream: MediaStream | null = null;
+      let lastError: unknown = null;
+
+      for (const constraints of attempts) {
         try {
-          const fallbackStream = await navigator.mediaDevices.getUserMedia({
-            video: true,
-            audio: false,
-          });
-          await attachStream(fallbackStream, "user");
-        } catch {
-          setError(CAMERA_ACCESS_ERROR);
+          stream = await navigator.mediaDevices.getUserMedia(constraints);
+          break;
+        } catch (err) {
+          lastError = err;
+          // Give the device a moment to be released before the next attempt,
+          // otherwise the retry can fail with NotReadableError.
+          await new Promise((resolve) => setTimeout(resolve, 150));
         }
       }
+
+      if (requestId !== requestIdRef.current) {
+        stream?.getTracks().forEach((track) => track.stop());
+        return;
+      }
+
+      if (!stream) {
+        setError(describeError(lastError));
+        return;
+      }
+
+      streamRef.current = stream;
+      setFacing(isMobileDevice() ? mode : "user");
+
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        try {
+          await videoRef.current.play();
+        } catch {
+          // play() rejects with AbortError whenever playback is interrupted
+          // - a re-render, a quick close, the source changing. The stream is
+          // still live, so this must NOT be reported as a camera failure.
+        }
+      }
+
+      if (requestId === requestIdRef.current) setReady(true);
     },
-    [attachStream, stopStream],
+    [stopStream],
   );
 
   useEffect(() => {
     startStream("environment");
-    return () => stopStream();
+    return () => {
+      requestIdRef.current++; // invalidate any in-flight start
+      stopStream();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleCapture = () => {
     const video = videoRef.current;
-    if (!video) return;
+    if (!video || !video.videoWidth) return;
     const canvas = document.createElement("canvas");
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
@@ -96,8 +134,8 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
           const file = new File([blob], `scan-${Date.now()}.jpg`, {
             type: "image/jpeg",
           });
-          onCapture(file);
           stopStream();
+          onCapture(file);
         }
       },
       "image/jpeg",
@@ -106,13 +144,13 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
   };
 
   const handleClose = () => {
+    requestIdRef.current++;
     stopStream();
     onClose();
   };
 
   const switchCamera = () => {
-    const nextFacing = facing === "environment" ? "user" : "environment";
-    startStream(nextFacing);
+    startStream(facing === "environment" ? "user" : "environment");
   };
 
   return (
@@ -121,8 +159,14 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
         <div className="flex w-full max-w-sm flex-col items-center gap-4 rounded-lg bg-white p-6 text-center dark:bg-zinc-900">
           <p className="text-sm font-bold text-rose-500">{error}</p>
           <button
-            onClick={handleClose}
+            onClick={() => startStream("environment")}
             className="w-full rounded-lg bg-[#006837] py-3 text-sm font-bold text-white"
+          >
+            Try Again
+          </button>
+          <button
+            onClick={handleClose}
+            className="w-full rounded-lg bg-slate-100 py-3 text-sm font-bold text-slate-700 dark:bg-zinc-800 dark:text-zinc-200"
           >
             Close
           </button>

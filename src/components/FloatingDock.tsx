@@ -4,13 +4,10 @@ interface FloatingDockProps {
   onReferenceClick: () => void;
 }
 
-// Analyze was removed from here entirely. It only ever fired on the very
-// first scan of a session - Dashboard's tap-to-scan card and the Results
-// page's "Scan Another Sample" button each already trigger analysis
-// directly and instantly, so a separate confirm-then-Analyze step in the
-// dock had nothing left to do and would sit disabled forever after the
-// first scan. The dock is now purely secondary/utility actions, consistent
-// on every page: settings and the pathogen reference lookup.
+// Analyze was removed from here entirely. Dashboard's tap-to-scan card and
+// the Results page's "Scan Another Sample" button each trigger analysis
+// directly, so the dock is purely secondary/utility actions, consistent on
+// every page: settings and the pathogen reference lookup.
 export const FloatingDock: React.FC<FloatingDockProps> = ({
   onReferenceClick,
 }) => {
@@ -99,20 +96,23 @@ export const FloatingDock: React.FC<FloatingDockProps> = ({
       </div>
 
       {settingsOpen && (
+        // Bottom sheet on phones, centred dialog from md up - a full-width
+        // sheet on a desktop monitor left each toggle stranded a monitor's
+        // width away from its own label.
         <div
-          className="fixed inset-0 z-[60] flex items-end bg-black/40"
+          className="fixed inset-0 z-[60] flex items-end bg-black/40 md:items-center md:justify-center md:p-6"
           onClick={() => setSettingsOpen(false)}
         >
           <div
-            className="w-full rounded-t-lg bg-white p-6 dark:bg-zinc-900"
+            className="w-full rounded-t-lg bg-white p-6 dark:bg-zinc-900 md:max-w-md md:rounded-lg md:p-8 md:shadow-2xl"
             style={{
               paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1.5rem)",
             }}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(event) => event.stopPropagation()}
           >
-            <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-slate-300 dark:bg-zinc-700" />
+            <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-slate-300 dark:bg-zinc-700 md:hidden" />
             <h2 className="mb-4 text-sm font-black uppercase tracking-widest text-slate-400">
-              Settings & Accessibility
+              Settings &amp; Accessibility
             </h2>
 
             <div className="flex flex-col gap-2">

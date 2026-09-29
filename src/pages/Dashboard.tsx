@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { FloatingDock } from "../components/FloatingDock";
 import { CameraCapture } from "../components/CameraCapture";
 import { ReferenceSheet } from "../components/ReferenceSheet";
-import appLogo from "../assets/appLogo.png";
 import { isMobileDevice } from "../utils/device";
+import appLogo from "../assets/appLogo.png";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -16,17 +16,15 @@ export default function Dashboard() {
 
   // Goes straight to the result - no separate "confirm this photo, then
   // tap Analyze" step. Matches the Results page's own "Scan Another
-  // Sample" behavior, and keeps clicks to a minimum (a fresh analysis is
-  // one tap away either way, so a confirm step just adds a step back
-  // rather than actually protecting anyone from a bad photo).
+  // Sample" behavior.
   const goToAnalysis = (file: File) => {
     navigate("/result", { state: { imageFile: file } });
   };
 
-  const handleImageSelect = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleImageSelect = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) goToAnalysis(file);
-    e.target.value = "";
+    event.target.value = "";
   };
 
   const handleCameraCapture = (file: File) => {
@@ -46,15 +44,15 @@ export default function Dashboard() {
     }
   };
 
-  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
+  const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
     setIsDragging(true);
   };
   const handleDragLeave = () => setIsDragging(false);
-  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
+  const handleDrop = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
     setIsDragging(false);
-    const file = e.dataTransfer.files?.[0];
+    const file = event.dataTransfer.files?.[0];
     if (file && file.type.startsWith("image/")) goToAnalysis(file);
   };
 
@@ -73,13 +71,16 @@ export default function Dashboard() {
           paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 6.5rem)",
         }}
       >
-        {/* Header, padded for the status bar / notch / Dynamic Island */}
+        {/* Header, padded for the status bar / notch / Dynamic Island.
+            Its inner row stays width-limited and centered so the brand
+            block spans the full canvas on desktop without the logo and
+            date drifting to the far left edge. */}
         <div
           className="relative w-full overflow-hidden bg-[#006837] px-6 pb-12 shadow-md"
           style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 1.5rem)" }}
         >
           <div className="pointer-events-none absolute -right-8 -top-10 h-40 w-40 rounded-full bg-white/10" />
-          <div className="relative flex items-center gap-3 md:mx-auto md:max-w-3xl lg:max-w-5xl">
+          <div className="relative flex items-center gap-3 md:mx-auto md:max-w-3xl lg:max-w-6xl">
             <img
               src={appLogo}
               alt="Logo"
@@ -96,11 +97,15 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* px-5 keeps the 20px edge padding at every width; the inner
-            max-w grows the usable content at md/lg instead of leaving a
-            phone-sized card stranded in the middle of a wide screen. */}
-        <main className="w-full flex-1 flex flex-col items-center px-5 py-8 md:mx-auto md:max-w-3xl lg:max-w-5xl">
-          <div className="w-full flex flex-col gap-6 md:flex-row md:items-center">
+        {/* md:justify-center makes the main area fill the remaining
+            viewport height and centre its content vertically on larger
+            screens, instead of stacking everything at the top and
+            leaving the lower two-thirds of a desktop window empty.
+            Mobile keeps its original top-aligned flow. */}
+        <main className="w-full flex-1 flex flex-col items-center px-5 py-8 md:justify-center md:py-12">
+          {/* Inner wrapper keeps line lengths readable on a wide canvas
+              while the page background itself runs full-bleed. */}
+          <div className="w-full flex flex-col gap-6 md:flex-row md:items-center md:mx-auto md:max-w-3xl lg:max-w-6xl lg:gap-12">
             {/* No frame, no border, no card - just the control itself.
                 Click anywhere in this area to scan; drop a file (desktop)
                 to analyze it immediately. */}
@@ -108,20 +113,23 @@ export default function Dashboard() {
               role="button"
               tabIndex={0}
               onClick={handleCameraClick}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") handleCameraClick();
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ")
+                  handleCameraClick();
               }}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
               aria-label="Tap to scan, or drop a photo here"
-              className={`flex w-full cursor-pointer flex-col items-center justify-center gap-4 rounded-lg py-10 transition-colors md:max-w-sm ${
-                isDragging ? "bg-[#006837]/5 ring-2 ring-[#006837]" : ""
+              className={`flex w-full cursor-pointer flex-col items-center justify-center gap-4 rounded-lg py-10 transition-colors md:max-w-sm lg:min-h-[340px] lg:flex-1 lg:py-16 ${
+                isDragging
+                  ? "bg-[#006837]/5 ring-2 ring-[#006837]"
+                  : "lg:bg-white lg:shadow-sm lg:border lg:border-slate-200 dark:lg:bg-zinc-900 dark:lg:border-zinc-800"
               }`}
             >
-              <div className="flex h-28 w-28 items-center justify-center rounded-full bg-[#006837] text-white shadow-xl transition active:scale-95">
+              <div className="flex h-28 w-28 items-center justify-center rounded-full bg-[#006837] text-white shadow-xl transition active:scale-95 lg:h-36 lg:w-36">
                 <svg
-                  className="h-11 w-11"
+                  className="h-11 w-11 lg:h-14 lg:w-14"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="1.75"
@@ -131,28 +139,29 @@ export default function Dashboard() {
                   <circle cx="12" cy="13" r="4" />
                 </svg>
               </div>
-              <p className="text-center text-[15px] font-bold text-slate-600 dark:text-zinc-300">
+              <p className="text-center text-[15px] font-bold text-slate-600 dark:text-zinc-300 lg:text-[17px]">
                 {isDragging ? "Drop to analyze" : "Tap to Scan"}
               </p>
               <button
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
+                onClick={(event) => {
+                  event.stopPropagation();
                   fileInputRef.current?.click();
                 }}
-                className="text-[12px] font-bold text-[#006837] underline underline-offset-2 dark:text-emerald-500"
+                className="text-[12px] font-bold text-[#006837] underline underline-offset-2 dark:text-emerald-500 lg:text-[13px]"
               >
                 or browse files
               </button>
             </div>
 
             {/* Stacks below the scan control on phones, sits beside it at
-                md and up. */}
-            <div className="flex flex-1 flex-col gap-3 rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+                md and up. lg:min-h matches the scan panel so the two
+                columns read as a balanced pair on a desktop canvas. */}
+            <div className="flex flex-1 flex-col justify-center gap-3 rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 lg:min-h-[340px] lg:gap-4 lg:p-10">
               <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">
                 Capture Guidelines
               </h2>
-              <ul className="flex flex-col gap-3 text-[13px] font-medium leading-relaxed text-slate-600 dark:text-zinc-300">
+              <ul className="flex flex-col gap-3 text-[13px] font-medium leading-relaxed text-slate-600 dark:text-zinc-300 lg:gap-4 lg:text-[15px]">
                 <li>
                   Use consistent overhead lighting; avoid glare on the plate.
                 </li>
