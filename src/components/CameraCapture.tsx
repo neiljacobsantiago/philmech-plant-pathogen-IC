@@ -54,6 +54,17 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
       setReady(false);
       stopStream();
 
+      // getUserMedia only exists on secure origins (https:// or localhost).
+      // On a plain http:// address navigator.mediaDevices is undefined, and
+      // that case used to fall through to the generic error below, which
+      // made it impossible to tell apart from a blocked or missing camera.
+      if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
+        setError(
+          "The camera needs a secure connection. Open this site using its https:// address, or use Upload instead.",
+        );
+        return;
+      }
+
       // Desktops have no rear camera, so asking for facingMode "environment"
       // there fails, then we immediately ask again - and that second request
       // can come back NotReadableError because the device is still being

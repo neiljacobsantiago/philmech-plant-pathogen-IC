@@ -120,12 +120,25 @@ export default function AnalysisResult() {
   // Look up the seeded reference record for the top match so the
   // "Cultural Characteristics" cards can cross-check the model's call
   // against the lab-sourced growth data for that species.
+  //
+  // "Scan Another Sample" re-renders this same component (same route), so
+  // state from the previous scan survives. The stored record is therefore
+  // cleared whenever the top match changes, and a lookup that finishes after
+  // the top match has changed again is discarded. Without this, an Unknown
+  // result kept showing the previous species' characteristics.
   useEffect(() => {
-    if (topMatch.name === "Unknown") return;
+    let cancelled = false;
+    setCharacteristics(null);
 
-    getPathogenById(topMatch.name).then((record) => {
-      if (record) setCharacteristics(record);
-    });
+    if (topMatch.name !== "Unknown") {
+      getPathogenById(topMatch.name).then((record) => {
+        if (!cancelled) setCharacteristics(record);
+      });
+    }
+
+    return () => {
+      cancelled = true;
+    };
   }, [topMatch.name]);
 
   if (isAnalyzing || error) {
@@ -150,7 +163,13 @@ export default function AnalysisResult() {
     );
   }
 
-  const displayChars = characteristics || FALLBACK_CHARACTERISTICS;
+  // Only ever show a record that belongs to the current top match, so
+  // another species' traits cannot appear, even for a single render while
+  // the effect above is still catching up.
+  const displayChars =
+    characteristics && characteristics.id === topMatch.name
+      ? characteristics
+      : FALLBACK_CHARACTERISTICS;
   const clearance = getClearanceStatus(topMatch.name, topMatch.score);
 
   return (
@@ -277,7 +296,11 @@ export default function AnalysisResult() {
                   <div key={prediction.name} className="flex flex-col gap-2">
                     <div className="flex justify-between items-center gap-3">
                       <span
-                        className={`flex-1 break-words text-[15px] leading-snug ${isTopMatch ? "font-black text-slate-900 dark:text-white" : "font-bold text-slate-600 dark:text-zinc-400"}`}
+                        className={`flex-1 break-words text-[15px] leading-snug ${
+                          isTopMatch
+                            ? "font-black text-slate-900 dark:text-white"
+                            : "font-bold text-slate-600 dark:text-zinc-400"
+                        }`}
                       >
                         {prediction.name}
                       </span>
@@ -299,13 +322,13 @@ export default function AnalysisResult() {
             </div>
 
             <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t border-slate-100 pt-4 dark:border-zinc-800">
-              {MATRIX_LEGEND.map((entry) => (
+              {MATRIX_LEGEND.map((legend) => (
                 <span
-                  key={entry.label}
+                  key={legend.label}
                   className="flex items-center gap-1.5 text-[10px] font-bold text-slate-500 dark:text-zinc-400"
                 >
-                  <span className={`h-2 w-2 rounded-full ${entry.color}`} />
-                  {entry.label}
+                  <span className={`h-2 w-2 rounded-full ${legend.color}`} />
+                  {legend.label}
                 </span>
               ))}
             </div>

@@ -1,9 +1,16 @@
-import React, { useRef, useState, ChangeEvent, DragEvent } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  ChangeEvent,
+  DragEvent,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import { FloatingDock } from "../components/FloatingDock";
 import { CameraCapture } from "../components/CameraCapture";
 import { ReferenceSheet } from "../components/ReferenceSheet";
 import { isMobileDevice } from "../utils/device";
+import { getModel } from "../utils/modelLoader";
 import appLogo from "../assets/appLogo.png";
 
 export default function Dashboard() {
@@ -13,6 +20,14 @@ export default function Dashboard() {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+
+  // Start loading (and warming up) the classification model as soon as the
+  // Dashboard opens, so the wait overlaps with the user lining up a shot
+  // instead of landing on their first scan. Failures are ignored here on
+  // purpose: the scan itself retries the load and surfaces any error.
+  useEffect(() => {
+    getModel().catch(() => {});
+  }, []);
 
   // Goes straight to the result - no separate "confirm this photo, then
   // tap Analyze" step. Matches the Results page's own "Scan Another
